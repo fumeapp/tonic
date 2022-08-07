@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/fumeapp/skele/pkg/setting"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/octoper/go-ray"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var Db *gorm.DB
@@ -23,31 +23,25 @@ type Model struct {
 func Setup() {
 	var err error
 	Db, err = gorm.Open(
-		setting.Database.Driver,
-		fmt.Sprintf(
+		mysql.New(mysql.Config{
+		DSN: fmt.Sprintf(
 			"%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 			setting.Database.User,
 			setting.Database.Password,
 			setting.Database.Host,
 			setting.Database.Database,
-		),
-	)
+		)},
+	))
 
 	if err != nil {
 		log.Fatalf("models.Setup err: %v", err)
 	}
 
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return setting.Database.TablePrefix + defaultTableName
-	}
-
-	Db.SingularTable(true)
-
 }
 
 func Truncate() {
-	Db.Exec("DROP TABLE user")
-	Db.Exec("DROP TABLE provider")
+	Db.Exec("DROP TABLE providers")
+	Db.Exec("DROP TABLE users")
 }
 
 func Migrate() {

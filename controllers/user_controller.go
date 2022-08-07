@@ -1,15 +1,18 @@
-package UserController
+package usercontroller
 
 import (
 	"net/http"
 
 	"github.com/fumeapp/skele/models"
 	"github.com/gin-gonic/gin"
+	"github.com/morkid/paginate"
 )
 
 func Index(c *gin.Context) {
-	var users []models.User
-	c.JSON(http.StatusOK, models.Db.Find(&users))
+	pg := paginate.New()
+	model := models.Db.Where("1 = 1").Model(&models.User{})
+	page := pg.Response(model, c.Request, &[]models.User{})
+	c.JSON(http.StatusOK, page)
 }
 
 func Show(c *gin.Context) {

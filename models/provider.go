@@ -5,5 +5,5 @@ type Provider struct {
 	Avatar  string
 	Name    string
 	Payload string `gorm:"type:json"`
-	User    User
+	UserId uint
 }
