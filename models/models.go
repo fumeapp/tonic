@@ -8,20 +8,21 @@ import (
 	"github.com/fumeapp/skele/pkg/setting"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/octoper/go-ray"
 )
 
-var db *gorm.DB
+var Db *gorm.DB
 
+// gorm.Model definition
 type Model struct {
-	ID        uint `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	ModifiedAt time.Time `json:"modified_at"`
-	DeletedOn time.Time `json:"deleted_on"`
+	ID        uint           `gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func Setup() {
 	var err error
-	db, err = gorm.Open(
+	Db, err = gorm.Open(
 		setting.Database.Driver,
 		fmt.Sprintf(
 			"%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
@@ -40,5 +41,21 @@ func Setup() {
 		return setting.Database.TablePrefix + defaultTableName
 	}
 
-	db.SingularTable(true)
+	Db.SingularTable(true)
+
+}
+
+func Truncate() {
+	Db.Exec("DROP TABLE user")
+	Db.Exec("DROP TABLE provider")
+}
+
+func Migrate() {
+	Db.AutoMigrate(&User{}, &Provider{})
+}
+
+func Seed() {
+	user := User{Name: "kevin olson", Email: "acidjazz@gmail.com", Avatar: "https://avatars.githubusercontent.com/u/967369?v=4"}
+	ray.Ray(user)
+	Db.Create(&user)
 }

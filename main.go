@@ -1,23 +1,32 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/fumeapp/skele/models"
 	"github.com/fumeapp/skele/pkg/setting"
-	"github.com/gin-gonic/gin"
+	"github.com/fumeapp/skele/routes"
 )
 
 
 func init() {
 	setting.Setup()
 	models.Setup()
+	models.Truncate()
+	models.Migrate()
+	models.Seed()
 }
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080
+
+	routes := routes.Init()
+
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: routes,
+	}
+
+	server.ListenAndServe()
+
+
 }
