@@ -20,6 +20,7 @@ type DatabaseSetting struct {
 	User     string
 	Password string
 	TablePrefix string
+	Logging  string
 }
 
 type YamlDatabase struct {
@@ -35,6 +36,7 @@ type YamlDatabase struct {
 
 type YamlDatabases struct {
 	DefaultConnection string         `yaml:"default"`
+	Logging string `yaml:"logging"`
 	Databases     []YamlDatabase `yaml:"databases"`
 }
 
@@ -55,6 +57,7 @@ func Setup() *DatabaseSetting {
 	fmt.Println(config.DefaultConnection)
 
 	Database.Connection = env("DB_CONNECTION", config.DefaultConnection)
+	Database.Logging = env("DB_LOGGING", config.Logging)
 	dbConfig := config.Databases[slices.IndexFunc(config.Databases, func(d YamlDatabase) bool { return d.Name == Database.Connection })]
 	Database.Driver = env("DB_DRIVER", dbConfig.Driver)
 	Database.Host = env("DB_HOST", dbConfig.Host)

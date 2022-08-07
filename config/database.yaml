@@ -1,4 +1,5 @@
 default: mysql
+logging: false
 
 databases:
   - name: mysql

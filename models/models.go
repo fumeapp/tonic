@@ -22,6 +22,10 @@ type Model struct {
 
 func Setup() {
 	var err error
+	var logMode = logger.Error
+	if (setting.Database.Logging == "true") {
+		logMode = logger.Info
+	}
 	Db, err = gorm.Open(
 		mysql.New(mysql.Config{
 			DSN: fmt.Sprintf(
@@ -33,7 +37,7 @@ func Setup() {
 			)},
 		),
 		&gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
+			Logger: logger.Default.LogMode(logMode),
 		},
 	)
 
