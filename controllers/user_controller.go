@@ -10,7 +10,7 @@ import (
 
 func Index(c *gin.Context) {
 	pg := paginate.New()
-	model := models.Db.Where("1 = 1").Model(&models.User{})
+	model := models.Db.Model(&models.User{})
 	page := pg.Response(model, c.Request, &[]models.User{})
 	c.JSON(http.StatusOK, page)
 }

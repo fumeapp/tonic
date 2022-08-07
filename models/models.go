@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/fumeapp/skele/pkg/setting"
-	"github.com/octoper/go-ray"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var Db *gorm.DB
@@ -31,7 +31,11 @@ func Setup() {
 			setting.Database.Host,
 			setting.Database.Database,
 		)},
-	))
+		),
+		&gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		},
+	)
 
 	if err != nil {
 		log.Fatalf("models.Setup err: %v", err)
@@ -50,6 +54,5 @@ func Migrate() {
 
 func Seed() {
 	user := User{Name: "kevin olson", Email: "acidjazz@gmail.com", Avatar: "https://avatars.githubusercontent.com/u/967369?v=4"}
-	ray.Ray(user)
 	Db.Create(&user)
 }
