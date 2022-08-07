@@ -30,7 +30,7 @@ func Setup() {
 		mysql.New(mysql.Config{
 			DSN: fmt.Sprintf(
 				"%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
-				setting.Database.User,
+				setting.Database.Username,
 				setting.Database.Password,
 				setting.Database.Host,
 				setting.Database.Database,

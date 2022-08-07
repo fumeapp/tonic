@@ -17,7 +17,7 @@ type DatabaseSetting struct {
 	Host     string
 	Port     string
 	Database string
-	User     string
+	Username     string
 	Password string
 	TablePrefix string
 	Logging  string
@@ -29,7 +29,7 @@ type YamlDatabase struct {
 	Host   string `yaml:"host"`
 	Port   string `yaml:"port"`
 	Database   string `yaml:"database"`
-	User   string `yaml:"user"`
+	Username   string `yaml:"username"`
 	Password   string `yaml:"password"`
 	TablePrefix   string `yaml:"prefix"`
 }
@@ -63,7 +63,7 @@ func Setup() *DatabaseSetting {
 	Database.Host = env("DB_HOST", dbConfig.Host)
 	Database.Port = env("DB_PORT", dbConfig.Port)
 	Database.Database = env("DB_DATABASE", dbConfig.Database)
-	Database.User = env("DB_USERNAME", dbConfig.User)
+	Database.Username = env("DB_USERNAME", dbConfig.Username)
 	Database.Password = env("DB_PASSWORD", dbConfig.Password)
 	Database.TablePrefix = env("DB_PREFIX", dbConfig.TablePrefix)
 
