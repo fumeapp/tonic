@@ -9,14 +9,14 @@ import (
 )
 
 func Index(c *gin.Context) {
-	pg := paginate.New()
-	model := models.Db.Model(&models.User{})
-	page := pg.Response(model, c.Request, &[]models.User{})
-	c.JSON(http.StatusOK, page)
+	c.JSON(
+		http.StatusOK,
+		paginate.New().With(models.Db.Model(&models.User{})).Request(c.Request).Response(&[]models.User{}),
+	)
 }
 
 func Show(c *gin.Context) {
 	var user models.User
-	models.Db.First(&user, c.Param("id"))
+ 	models.Db.Model(&models.User{}).Preload("Providers").First(&user, c.Param("id"))
 	c.JSON(http.StatusOK, user)
 }
