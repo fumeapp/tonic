@@ -1,7 +1,6 @@
 package setting
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -50,11 +49,17 @@ func env(key string, config string) string {
 }
 
 func Setup() *DatabaseSetting {
-
 	godotenv.Load(".env")
+	return DatabaseSetup()
+}
 
+func IsDev () bool {
+	return env("APP_ENV", "dev") == "dev"
+}
+
+
+func DatabaseSetup() *DatabaseSetting {
 	config := loadConfig[YamlDatabases]("config/database.yaml")
-	fmt.Println(config.DefaultConnection)
 
 	Database.Connection = env("DB_CONNECTION", config.DefaultConnection)
 	Database.Logging = env("DB_LOGGING", config.Logging)

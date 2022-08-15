@@ -28,15 +28,17 @@ func main() {
 
 	routes := routes.Init()
 
-	server := &http.Server{
-		Addr:    ":8000",
-		Handler: routes,
+	if (setting.IsDev()) {
+		server := &http.Server{
+			Addr:    ":8000",
+			Handler: routes,
+		}
+		server.ListenAndServe()
+	} else {
+		ginLambda = ginadapter.New(routes)
+		lambda.Start(Handler)
 	}
 
-	ginLambda = ginadapter.New(routes)
-	server.ListenAndServe()
-
-	lambda.Start(Handler)
 }
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
