@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/fumeapp/skele/pkg/setting"
+	"github.com/fumeapp/tonic/pkg/setting"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

@@ -1,7 +1,7 @@
 package routes
 
 import (
-	usercontroller "github.com/fumeapp/skele/controllers"
+	usercontroller "github.com/fumeapp/tonic/controllers"
 	"github.com/gin-gonic/gin"
 )
 

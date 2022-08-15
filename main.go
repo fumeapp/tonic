@@ -3,9 +3,9 @@ package main
 import (
 	"net/http"
 
-	"github.com/fumeapp/skele/models"
-	"github.com/fumeapp/skele/pkg/setting"
-	"github.com/fumeapp/skele/routes"
+	"github.com/fumeapp/tonic/models"
+	"github.com/fumeapp/tonic/pkg/setting"
+	"github.com/fumeapp/tonic/routes"
 )
 
 
@@ -22,7 +22,7 @@ func main() {
 	routes := routes.Init()
 
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":8000",
 		Handler: routes,
 	}
 

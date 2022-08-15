@@ -1,4 +1,4 @@
-module github.com/fumeapp/skele
+module github.com/fumeapp/tonic
 
 go 1.18
 

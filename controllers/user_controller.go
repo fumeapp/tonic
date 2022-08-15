@@ -3,7 +3,7 @@ package usercontroller
 import (
 	"net/http"
 
-	"github.com/fumeapp/skele/models"
+	"github.com/fumeapp/tonic/models"
 	"github.com/gin-gonic/gin"
 	"github.com/morkid/paginate"
 )
