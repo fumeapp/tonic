@@ -78,7 +78,7 @@ func Seed() {
 			{
 				Name: "google",
 				Avatar: user.Avatar,
-				Payload: "{\"id\":\"12345\",\"name\":\"" + fakeUser.Name + "\"}",
+				Payload: "{\"id\":\"12345\",\"name\":\"John Smith\"}",
 			},
 		}
 		// Db.Create(&user)

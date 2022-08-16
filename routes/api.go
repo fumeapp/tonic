@@ -2,16 +2,15 @@ package routes
 
 import (
 	"github.com/fumeapp/tonic/controllers"
+	"github.com/fumeapp/tonic/pkg/route"
 	"github.com/gin-gonic/gin"
 )
 
-func Init() *gin.Engine {
-
+func Init(IsDev bool) *gin.Engine {
 	r := gin.New()
-
-	r.GET("/", controllers.BaseIndex)
-	r.GET("/user", controllers.UserIndex)
-	r.GET("/user/:id", controllers.UserShow)
-
+	if (IsDev) {
+		route.Base(r)
+	}
+	route.ApiResource(r, "user", controllers.UserResource())
 	return r
 }
