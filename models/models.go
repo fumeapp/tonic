@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/bxcodec/faker/v3"
 	"github.com/fumeapp/tonic/pkg/setting"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -57,6 +58,33 @@ func Migrate() {
 }
 
 func Seed() {
+	type FakeUser struct {
+		Name   string `faker:"name"`
+		Email   string `faker:"email"`
+		Avatar string
+	}
+	users := []User{}
+	for i := 0; i < 10; i++ {
+		fakeUser := FakeUser{}
+		faker.FakeData(&fakeUser)
+		var fakeAvatar = "http://i.pravatar.cc/150?u=" + fakeUser.Email
+		fakeUser.Avatar = fakeAvatar
+
+		user := User{}
+		user.Name = fakeUser.Name
+		user.Email = fakeUser.Email
+		user.Avatar = fakeUser.Avatar
+		user.Providers = []Provider{
+			{
+				Name: "google",
+				Avatar: user.Avatar,
+				Payload: "{\"id\":\"12345\",\"name\":\"" + fakeUser.Name + "\"}",
+			},
+		}
+		users = append(users, user)
+	}
+	Db.Create(&users)
+	/*
 	user := User{
 		Name: "kevin olson",
 		Email: "acidjazz@gmail.com",
@@ -68,6 +96,7 @@ func Seed() {
 				Payload: "{\"id\":\"12345\",\"name\":\"kevin olson\"}",
 			},
 		},
+
 	}
-	Db.Create(&user)
+	*/
 }

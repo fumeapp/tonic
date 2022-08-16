@@ -11,6 +11,7 @@ require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/aws/aws-lambda-go v1.34.1 // indirect
 	github.com/awslabs/aws-lambda-go-api-proxy v0.13.3 // indirect
+	github.com/bxcodec/faker/v3 v3.8.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gomarkdown/markdown v0.0.0-20210208175418-bda154fe17d8 // indirect
 	github.com/google/uuid v1.3.0 // indirect
