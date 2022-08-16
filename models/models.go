@@ -81,6 +81,7 @@ func Seed() {
 				Payload: "{\"id\":\"12345\",\"name\":\"" + fakeUser.Name + "\"}",
 			},
 		}
+		// Db.Create(&user)
 		users = append(users, user)
 	}
 	Db.Create(&users)

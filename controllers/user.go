@@ -11,7 +11,7 @@ import (
 func UserIndex(c *gin.Context) {
 	c.JSON(
 		http.StatusOK,
-		paginate.New().With(models.Db.Model(&models.User{})).Request(c.Request).Response(&[]models.User{}),
+		paginate.New().With(models.Db.Model(&models.User{}).Preload("Providers")).Request(c.Request).Response(&[]models.User{}),
 	)
 }
 
