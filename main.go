@@ -28,7 +28,7 @@ func init() {
 
 func main() {
 
-	routes := routes.Init(setting.IsDev())
+	routes := routes.Init(setting.IsDev() || setting.IsDebug())
 
 	if (setting.IsDev()) {
 		server := &http.Server{

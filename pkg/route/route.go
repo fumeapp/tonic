@@ -13,7 +13,7 @@ type ApiResourceStruct struct {
 }
 
 func Routes(route *gin.Engine) {
-	route.GET("/routes", func(c *gin.Context) {
+	route.GET("/", func(c *gin.Context) {
 		type RouteInfo struct {
 			Method string
 			Path   string
