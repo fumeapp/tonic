@@ -1,13 +1,9 @@
 package setting
 
 import (
-	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
-	"golang.org/x/exp/slices"
-	"gopkg.in/yaml.v2"
 )
 
 type DatabaseSetting struct {
@@ -20,23 +16,6 @@ type DatabaseSetting struct {
 	Password string
 	TablePrefix string
 	Logging  string
-}
-
-type YamlDatabase struct {
-	Name string `yaml:"name"`
-	Driver string `yaml:"driver"`
-	Host   string `yaml:"host"`
-	Port   string `yaml:"port"`
-	Database   string `yaml:"database"`
-	Username   string `yaml:"username"`
-	Password   string `yaml:"password"`
-	TablePrefix   string `yaml:"prefix"`
-}
-
-type YamlDatabases struct {
-	DefaultConnection string         `yaml:"default"`
-	Logging string `yaml:"logging"`
-	Databases     []YamlDatabase `yaml:"databases"`
 }
 
 var Database = &DatabaseSetting{}
@@ -59,34 +38,16 @@ func IsDev () bool {
 
 
 func DatabaseSetup() *DatabaseSetting {
-	config := loadConfig[YamlDatabases]("config/database.yaml")
 
-	Database.Connection = env("DB_CONNECTION", config.DefaultConnection)
-	Database.Logging = env("DB_LOGGING", config.Logging)
-	dbConfig := config.Databases[slices.IndexFunc(config.Databases, func(d YamlDatabase) bool { return d.Name == Database.Connection })]
-	Database.Driver = env("DB_DRIVER", dbConfig.Driver)
-	Database.Host = env("DB_HOST", dbConfig.Host)
-	Database.Port = env("DB_PORT", dbConfig.Port)
-	Database.Database = env("DB_DATABASE", dbConfig.Database)
-	Database.Username = env("DB_USERNAME", dbConfig.Username)
-	Database.Password = env("DB_PASSWORD", dbConfig.Password)
-	Database.TablePrefix = env("DB_PREFIX", dbConfig.TablePrefix)
+	Database.Connection = env("DB_CONNECTION", "mysql")
+	Database.Logging = env("DB_LOGGING", "false")
+	Database.Driver = env("DB_DRIVER", "mysql")
+	Database.Host = env("DB_HOST", "localhost")
+	Database.Port = env("DB_PORT", "3306")
+	Database.Database = env("DB_DATABASE", "tonic")
+	Database.Username = env("DB_USERNAME", "root")
+	Database.Password = env("DB_PASSWORD", "")
+	Database.TablePrefix = env("DB_PREFIX", "")
 
 	return Database
-}
-
-func loadConfig[T any](filename string) (config *T) {
-	configFile, err := ioutil.ReadFile(filename)
-
-	if err != nil {
-		log.Fatalf("loadConfig() readFile err #%v", err)
-	}
-
-	err2 := yaml.Unmarshal(configFile, &config)
-
-	if err2 != nil {
-		log.Fatalf("loadConfig() Unmarshall err #%v", err)
-	}
-
-	return config
 }
