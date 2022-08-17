@@ -13,7 +13,7 @@ func BaseIndex(c *gin.Context, r *gin.Engine) {
 		Handler  string
 	}
 	routes := []RouteInfo{}
-	for i, e := range r.Routes() {
+	for _, e := range r.Routes() {
 		routes = append(routes, RouteInfo{
 			Method: e.Method,
 			Path:   e.Path,
