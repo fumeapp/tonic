@@ -11,7 +11,7 @@ import (
 func Init(IsDev bool) *gin.Engine {
 	r := gin.New()
 	if (IsDev) {
-		route.Base(r)
+		route.Routes(r)
 	}
 	route.ApiResource(r, "user", controllers.UserResource())
 	r.NoRoute(func(c *gin.Context) {
