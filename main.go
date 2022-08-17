@@ -32,7 +32,7 @@ func main() {
 
 	if (setting.IsDev()) {
 		server := &http.Server{
-			Addr:    ":8000",
+			Addr:    ":8080",
 			Handler: routes,
 		}
 		server.ListenAndServe()
