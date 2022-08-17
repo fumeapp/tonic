@@ -36,7 +36,7 @@ func IsDev () bool {
 	return env("APP_ENV", "dev") == "dev"
 }
 func IsDebug () bool {
-	return env("APP_DEBUG", "true") == "true"
+	return env("APP_DEBUG", "false") == "true"
 }
 
 
