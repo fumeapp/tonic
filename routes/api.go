@@ -12,5 +12,8 @@ func Init(IsDev bool) *gin.Engine {
 		route.Base(r)
 	}
 	route.ApiResource(r, "user", controllers.UserResource())
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
+	})
 	return r
 }
