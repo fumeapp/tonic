@@ -20,9 +20,9 @@ func init() {
 	setting.Setup()
 	models.Setup()
 	/*
-	models.Truncate()
-	models.Migrate()
-	models.Seed()
+		models.Truncate()
+		models.Migrate()
+		models.Seed()
 	*/
 }
 
@@ -30,7 +30,7 @@ func main() {
 
 	routes := routes.Init(setting.IsDev() || setting.IsDebug())
 
-	if (setting.IsDev()) {
+	if setting.IsDev() {
 		server := &http.Server{
 			Addr:    ":8000",
 			Handler: routes,
