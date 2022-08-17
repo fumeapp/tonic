@@ -19,9 +19,11 @@ func init() {
 
 	setting.Setup()
 	models.Setup()
+	/*
 	models.Truncate()
 	models.Migrate()
 	models.Seed()
+	*/
 }
 
 func main() {
