@@ -13,7 +13,7 @@ import (
 	"github.com/fumeapp/tonic/routes"
 )
 
-var ginLambda *ginadapter.GinLambda
+var ginLambda *ginadapter.GinLambdaV2
 
 func init() {
 
@@ -32,18 +32,18 @@ func main() {
 
 	if (setting.IsDev()) {
 		server := &http.Server{
-			Addr:    ":8080",
+			Addr:    ":8000",
 			Handler: routes,
 		}
 		server.ListenAndServe()
 	} else {
-		ginLambda = ginadapter.New(routes)
+		ginLambda = ginadapter.NewV2(routes)
 		lambda.Start(Handler)
 	}
 
 }
 
-func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	// If no name is provided in the HTTP request body, throw an error
 	return ginLambda.ProxyWithContext(ctx, req)
 }

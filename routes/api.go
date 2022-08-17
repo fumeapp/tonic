@@ -17,10 +17,7 @@ func Init(IsDev bool) *gin.Engine {
 	r.NoRoute(func(c *gin.Context) {
 		fmt.Println("Method: " + c.Request.Method)
 		fmt.Println("URL: " + c.Request.URL.String())
-		for k, v := range c.Request.Header {
-			fmt.Println("Header: " + k + " " + v[0])
-		}
-		c.JSON(404, gin.H{"code": "P4GE_NOT_FOUND", "message": "Page not found"})
+		c.JSON(404, gin.H{"code": "P4GE_NOT_F0UND", "message": "Page not found"})
 	})
 	return r
 }
