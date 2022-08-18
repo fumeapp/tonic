@@ -12,9 +12,9 @@ func init() {
 	setting.Setup()
 	models.Setup()
 	/*
-	models.Truncate()
-	models.Migrate()
-	models.Seed()
+		models.Truncate()
+		models.Migrate()
+		models.Seed()
 	*/
 }
 
