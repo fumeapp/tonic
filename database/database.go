@@ -1,25 +1,16 @@
-package models
+package database
 
 import (
 	"fmt"
 	"log"
-	"time"
 
-	"github.com/bxcodec/faker/v3"
-	"github.com/fumeapp/tonic/pkg/setting"
+	"github.com/fumeapp/tonic/setting"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 var Db *gorm.DB
-
-// gorm.Model definition
-type Model struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
 
 func Setup() {
 	var err error
@@ -54,10 +45,11 @@ func Truncate() {
 }
 
 func Migrate() {
-	Db.AutoMigrate(&User{}, &Provider{})
+	Db.Exec("SQL FOR MIGRATION")
 }
 
 func Seed() {
+	/*
 	type FakeUser struct {
 		Name   string `faker:"name"`
 		Email   string `faker:"email"`
@@ -85,7 +77,6 @@ func Seed() {
 		users = append(users, user)
 	}
 	Db.Create(&users)
-	/*
 	user := User{
 		Name: "kevin olson",
 		Email: "acidjazz@gmail.com",

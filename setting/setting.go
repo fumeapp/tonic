@@ -7,7 +7,6 @@ import (
 )
 
 type DatabaseSetting struct {
-	Connection   string
 	Driver   string
 	Host     string
 	Port     string
@@ -42,7 +41,6 @@ func IsDebug () bool {
 
 func DatabaseSetup() *DatabaseSetting {
 
-	Database.Connection = env("DB_CONNECTION", "mysql")
 	Database.Logging = env("DB_LOGGING", "false")
 	Database.Driver = env("DB_DRIVER", "mysql")
 	Database.Host = env("DB_HOST", "localhost")
