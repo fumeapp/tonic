@@ -5,8 +5,12 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/fumeapp/tonic/database"
+	"github.com/fumeapp/tonic/setting"
+	"github.com/golang-migrate/migrate"
 	"github.com/octoper/go-ray"
 
 	"github.com/spf13/cobra"
@@ -25,9 +29,19 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("migrate called")
 
+		if _, err := os.Stat("./database/migrations"); os.IsNotExist(err) {
+			fmt.Println("No migration directory found")
+		}
+
+		setting.Setup()
+		database.Setup()
 		ray.Ray(database.DSN())
 
-		// m, err := migrate.New("file://database/migrations", )
+		m, err := migrate.New("file://database/migrations", database.DSN())
+		if err != nil {
+			log.Fatal(err)
+		}
+		m.Up()
 	},
 }
 
