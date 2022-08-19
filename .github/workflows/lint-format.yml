@@ -6,7 +6,7 @@ on:
     - production
 jobs:
   lint:
-    name: golangci-lint
+    name: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v3
