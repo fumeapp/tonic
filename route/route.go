@@ -83,7 +83,7 @@ func checkNumeric(c *gin.Context) bool {
 
 func retrieveModel(c *gin.Context) (any, error) {
 	model := reflect.New(modelType).Interface()
-	result := Db.First(model, c.Param("id"))
+	result := Db.First(&model, c.Param("id"))
 	if result.Error != nil {
 		abortNotFound(c)
 		return -1, errors.New("Record not found")
