@@ -7,8 +7,7 @@
 
 [![Go Reference][1]][2]
 [![GoCard][3]][4]
-
-[![Gofmt](https://github.com/fumeapp/tonic/actions/workflows/format.yml/badge.svg)](https://github.com/fumeapp/tonic/actions/workflows/format.yml)
+[![gofmt](https://github.com/fumeapp/tonic/actions/workflows/format.yml/badge.svg)](https://github.com/fumeapp/tonic/actions/workflows/format.yml)
 [![golangci-lint](https://github.com/fumeapp/tonic/actions/workflows/lint.yml/badge.svg)](https://github.com/fumeapp/tonic/actions/workflows/lint.yml)
 
 [1]: https://pkg.go.dev/badge/github.com/fumeapp/tonic.svg
