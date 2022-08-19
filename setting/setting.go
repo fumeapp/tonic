@@ -1,20 +1,21 @@
 package setting
 
 import (
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 )
 
 type DatabaseSetting struct {
-	Driver   string
-	Host     string
-	Port     string
-	Database string
-	Username     string
-	Password string
+	Driver      string
+	Host        string
+	Port        string
+	Database    string
+	Username    string
+	Password    string
 	TablePrefix string
-	Logging  string
+	Logging     string
 }
 
 var Database = &DatabaseSetting{}
@@ -27,17 +28,19 @@ func env(key string, config string) string {
 }
 
 func Setup() *DatabaseSetting {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	return DatabaseSetup()
 }
 
-func IsDev () bool {
+func IsDev() bool {
 	return env("APP_ENV", "dev") == "dev"
 }
-func IsDebug () bool {
+func IsDebug() bool {
 	return env("APP_DEBUG", "false") == "true"
 }
-
 
 func DatabaseSetup() *DatabaseSetting {
 
