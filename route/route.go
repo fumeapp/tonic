@@ -5,21 +5,21 @@ import (
 	"reflect"
 	"strconv"
 
+	"errors"
+
 	. "github.com/fumeapp/tonic/database"
 	"github.com/gin-gonic/gin"
-	"github.com/octoper/go-ray"
 )
 
 type ApiResourceStruct struct {
 	Index  func(c *gin.Context)
-	Show   func(c *gin.Context)
-	Update func(c *gin.Context)
+	Show   func(c *gin.Context, filled any)
+	Update func(c *gin.Context, filled any)
 }
 
 var router *gin.Engine
 var modelType reflect.Type
 var apirs ApiResourceStruct
-var name string
 
 func Routes(route *gin.Engine) {
 	router = route
@@ -44,19 +44,33 @@ func RouteList(c *gin.Context) {
 }
 
 func show (c *gin.Context) {
-	if checkNumeric(c) && retrieveModel(c) {
-		ray.Ray("and tell")
-		apirs.Show(c)
+	if checkNumeric(c) {
+		value, error := retrieveModel(c)
+		if (error != nil) {
+			abortNotFound(c)
+		} else {
+			apirs.Show(c, value)
+		}
+	}
+}
+
+func update (c *gin.Context) {
+	if checkNumeric(c)  {
+		value, error := retrieveModel(c)
+		if (error != nil) {
+			abortNotFound(c)
+		} else {
+			apirs.Update(c, value)
+		}
 	}
 }
 
 func ApiResource(route *gin.Engine, n string, model any, ctls ApiResourceStruct) {
 	apirs = ctls
 	modelType = reflect.TypeOf(model)
-	name = n
 	route.GET("/"+n, ctls.Index)
 	route.GET("/"+n+"/:id", show)
-	route.PUT("/"+n+"/:id", ctls.Update)
+	route.PUT("/"+n+"/:id", update)
 }
 
 func checkNumeric(c *gin.Context) bool {
@@ -67,15 +81,14 @@ func checkNumeric(c *gin.Context) bool {
 	return true
 }
 
-func retrieveModel(c *gin.Context) bool {
-	filled := reflect.New(modelType).Interface()
-	result := Db.Where("id = ?", c.Param("id")).First(filled)
+func retrieveModel(c *gin.Context) (any, error) {
+	model := reflect.New(modelType).Interface()
+	result := Db.First(model, c.Param("id"))
 	if result.Error != nil {
 		abortNotFound(c)
-		return false
+		return -1, errors.New("Record not found")
 	}
-	c.Set(name, filled)
-	return true
+	return model, nil
 }
 
 func abortNotFound(c *gin.Context) {
