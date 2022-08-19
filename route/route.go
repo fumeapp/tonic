@@ -3,6 +3,7 @@ package route
 import (
 	"errors"
 	"net/http"
+	"reflect"
 	"strconv"
 
 	. "github.com/fumeapp/tonic/database"
@@ -17,7 +18,7 @@ type ApiResourceStruct struct {
 
 var (
 	router    *gin.Engine
-	modelType any
+	modelType reflect.Type
 	apirs     ApiResourceStruct
 )
 
@@ -68,7 +69,7 @@ func update(c *gin.Context) {
 // note: only pass value to model. dont pass a pointer.
 func ApiResource(route *gin.Engine, n string, model any, ctls ApiResourceStruct) {
 	apirs = ctls
-	modelType = model
+	modelType = reflect.TypeOf(model)
 	route.GET("/"+n, ctls.Index)
 	route.GET("/"+n+"/:id", show)
 	route.PUT("/"+n+"/:id", update)
@@ -83,11 +84,8 @@ func checkNumeric(c *gin.Context) bool {
 }
 
 func retrieveModel(c *gin.Context) (any, error) {
-	// modelType is a value and not a pointer.
-	// we know it because we wrote a note for the user, above.
-	// because modelType is a value, we need to take pointer to it.
-	model := modelType
-	result := Db.First(&model, c.Param("id"))
+	model := reflect.New(modelType).Interface()
+	result := Db.First(model, c.Param("id"))
 	if result.Error != nil {
 		abortNotFound(c)
 		return -1, errors.New("Record not found")
