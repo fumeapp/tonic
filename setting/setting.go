@@ -26,14 +26,10 @@ func env(key string, config string) string {
 	return config
 }
 
-
 func Setup() *DatabaseSetting {
-
 	godotenv.Load()
-
 	return DatabaseSetup()
 }
-
 
 func IsDev () bool {
 	return env("APP_ENV", "dev") == "dev"
