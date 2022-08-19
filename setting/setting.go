@@ -1,6 +1,7 @@
 package setting
 
 import (
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -27,7 +28,10 @@ func env(key string, config string) string {
 }
 
 func Setup() *DatabaseSetting {
-	godotenv.Load(".env")
+	err := godotenv.Load()
+	if (err != nil) {
+		log.Fatal("Erorr loading .env file")
+	}
 	return DatabaseSetup()
 }
 
