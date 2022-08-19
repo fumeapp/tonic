@@ -2,24 +2,25 @@ package route
 
 import (
 	"net/http"
-	"reflect"
 	"strconv"
 
 	"errors"
 
-	. "github.com/fumeapp/tonic/database"
+	"github.com/fumeapp/tonic/database"
 	"github.com/gin-gonic/gin"
 )
 
 type ApiResourceStruct struct {
 	Index  func(c *gin.Context)
-	Show   func(c *gin.Context, filled any)
-	Update func(c *gin.Context, filled any)
+	Show   func(c *gin.Context, value any)
+	Update func(c *gin.Context, value any)
 }
 
-var router *gin.Engine
-var modelType reflect.Type
-var apirs ApiResourceStruct
+var (
+	router *gin.Engine
+	model any
+	resources ApiResourceStruct
+)
 
 func Routes(route *gin.Engine) {
 	router = route
@@ -44,53 +45,54 @@ func RouteList(c *gin.Context) {
 }
 
 func show (c *gin.Context) {
-	if checkNumeric(c) {
-		value, error := retrieveModel(c)
-		if (error != nil) {
-			abortNotFound(c)
+	if isNumeric(c) {
+		value, error := retrieve(c)
+		if error != nil {
+			invalid(c)
 		} else {
-			apirs.Show(c, value)
+			resources.Show(c, value)
 		}
+	} else {
+		invalid(c)
 	}
 }
 
 func update (c *gin.Context) {
-	if checkNumeric(c)  {
-		value, error := retrieveModel(c)
-		if (error != nil) {
-			abortNotFound(c)
+	if isNumeric(c)  {
+		value, error := retrieve(c)
+		if error != nil {
+			invalid(c)
 		} else {
-			apirs.Update(c, value)
+			resources.Update(c, value)
 		}
+	} else {
+		invalid(c)
 	}
 }
 
-func ApiResource(route *gin.Engine, n string, model any, ctls ApiResourceStruct) {
-	apirs = ctls
-	modelType = reflect.TypeOf(model)
-	route.GET("/"+n, ctls.Index)
+func ApiResource(route *gin.Engine, n string, _model any, _resources ApiResourceStruct) {
+	resources = _resources
+	model = _model
+	route.GET("/"+n, resources.Index)
 	route.GET("/"+n+"/:id", show)
 	route.PUT("/"+n+"/:id", update)
 }
 
-func checkNumeric(c *gin.Context) bool {
+func isNumeric(c *gin.Context) bool {
 	if _, err := strconv.Atoi(c.Param("id")); err != nil {
-		abortNotFound(c)
 		return false
 	}
 	return true
 }
 
-func retrieveModel(c *gin.Context) (any, error) {
-	model := reflect.New(modelType).Interface()
-	result := Db.First(&model, c.Param("id"))
+func retrieve(c *gin.Context) (any, error) {
+	result := database.Db.First(&model, c.Param("id"))
 	if result.Error != nil {
-		abortNotFound(c)
 		return -1, errors.New("Record not found")
 	}
 	return model, nil
 }
 
-func abortNotFound(c *gin.Context) {
+func invalid(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{"message": "Resource not found"})
 }
