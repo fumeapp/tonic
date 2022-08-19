@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/fumeapp/tonic/setting"
-	"github.com/octoper/go-ray"
 	"github.com/opensearch-project/opensearch-go"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -15,7 +14,7 @@ import (
 )
 
 var Db *gorm.DB
-var Es *opensearch.Client
+var Os *opensearch.Client
 
 func DSN() string {
 	return fmt.Sprintf(
@@ -46,9 +45,7 @@ func Setup() {
 		log.Fatalf("gorm.DB err: %v", err)
 	}
 
-	ray.Ray(setting.Opensearch)
-
-	Es, err = opensearch.NewClient(opensearch.Config{
+	Os, err = opensearch.NewClient(opensearch.Config{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
