@@ -1,11 +1,9 @@
 package route
 
 import (
-	"net/http"
-	"reflect"
-	"strconv"
-
 	"errors"
+	"net/http"
+	"strconv"
 
 	. "github.com/fumeapp/tonic/database"
 	"github.com/gin-gonic/gin"
@@ -17,9 +15,11 @@ type ApiResourceStruct struct {
 	Update func(c *gin.Context, filled any)
 }
 
-var router *gin.Engine
-var modelType reflect.Type
-var apirs ApiResourceStruct
+var (
+	router    *gin.Engine
+	modelType any
+	apirs     ApiResourceStruct
+)
 
 func Routes(route *gin.Engine) {
 	router = route
@@ -43,10 +43,10 @@ func RouteList(c *gin.Context) {
 	c.JSON(http.StatusOK, routes)
 }
 
-func show (c *gin.Context) {
+func show(c *gin.Context) {
 	if checkNumeric(c) {
 		value, error := retrieveModel(c)
-		if (error != nil) {
+		if error != nil {
 			abortNotFound(c)
 		} else {
 			apirs.Show(c, value)
@@ -54,10 +54,10 @@ func show (c *gin.Context) {
 	}
 }
 
-func update (c *gin.Context) {
-	if checkNumeric(c)  {
+func update(c *gin.Context) {
+	if checkNumeric(c) {
 		value, error := retrieveModel(c)
-		if (error != nil) {
+		if error != nil {
 			abortNotFound(c)
 		} else {
 			apirs.Update(c, value)
@@ -65,9 +65,10 @@ func update (c *gin.Context) {
 	}
 }
 
+// note: only pass value to model. dont pass a pointer.
 func ApiResource(route *gin.Engine, n string, model any, ctls ApiResourceStruct) {
 	apirs = ctls
-	modelType = reflect.TypeOf(model)
+	modelType = model
 	route.GET("/"+n, ctls.Index)
 	route.GET("/"+n+"/:id", show)
 	route.PUT("/"+n+"/:id", update)
@@ -82,7 +83,10 @@ func checkNumeric(c *gin.Context) bool {
 }
 
 func retrieveModel(c *gin.Context) (any, error) {
-	model := reflect.New(modelType).Interface()
+	// modelType is a value and not a pointer.
+	// we know it because we wrote a note for the user, above.
+	// because modelType is a value, we need to take pointer to it.
+	model := modelType
 	result := Db.First(&model, c.Param("id"))
 	if result.Error != nil {
 		abortNotFound(c)
