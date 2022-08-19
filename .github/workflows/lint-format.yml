@@ -1,11 +1,21 @@
-name: format
+name: lint
 on:
   push:
     branches-ignore:
     - staging
     - production
 jobs:
-  golangci:
+  lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+  format:
     name: format
     runs-on: ubuntu-latest
     steps:

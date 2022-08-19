@@ -7,6 +7,7 @@ import (
 	"errors"
 
 	"github.com/fumeapp/tonic/database"
+	"github.com/fumeapp/tonic/setting"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,6 +22,13 @@ var (
 	model any
 	resources ApiResourceStruct
 )
+
+func Init(route *gin.Engine) {
+	router = route
+	if (setting.IsDev() || setting.IsDebug()) {
+		Routes(router)
+	}
+}
 
 func Routes(route *gin.Engine) {
 	router = route
@@ -88,7 +96,7 @@ func isNumeric(c *gin.Context) bool {
 func retrieve(c *gin.Context) (any, error) {
 	result := database.Db.First(&model, c.Param("id"))
 	if result.Error != nil {
-		return -1, errors.New("Record not found")
+		return -1, errors.New("Record not found : " + c.Param("id"))
 	}
 	return model, nil
 }
