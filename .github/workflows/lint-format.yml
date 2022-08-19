@@ -1,4 +1,4 @@
-name: lint
+name: lint and format
 on:
   push:
     branches-ignore:
