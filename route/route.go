@@ -9,7 +9,7 @@ import (
 type ApiResourceStruct struct {
 	Index	func(c *gin.Context)
 	Show	func(c *gin.Context)
-	Update	func(c *gin.Context)
+		Update	func(c *gin.Context)
 }
 
 func Routes(route *gin.Engine) {
