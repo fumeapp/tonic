@@ -7,17 +7,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type DatabaseSetting struct {
-	Driver      string
-	Host        string
-	Port        string
-	Database    string
-	Username    string
-	Password    string
-	TablePrefix string
-	Logging     string
-}
-
 var Database = &DatabaseSetting{}
 
 func env(key string, config string) string {
@@ -40,18 +29,4 @@ func IsDev() bool {
 }
 func IsDebug() bool {
 	return env("APP_DEBUG", "false") == "true"
-}
-
-func DatabaseSetup() *DatabaseSetting {
-
-	Database.Logging = env("DB_LOGGING", "false")
-	Database.Driver = env("DB_DRIVER", "mysql")
-	Database.Host = env("DB_HOST", "localhost")
-	Database.Port = env("DB_PORT", "3306")
-	Database.Database = env("DB_DATABASE", "tonic")
-	Database.Username = env("DB_USERNAME", "root")
-	Database.Password = env("DB_PASSWORD", "")
-	Database.TablePrefix = env("DB_PREFIX", "")
-
-	return Database
 }

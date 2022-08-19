@@ -12,26 +12,31 @@ type ApiResourceStruct struct {
 	Update func(c *gin.Context)
 }
 
+var router *gin.Engine
+
 func Routes(route *gin.Engine) {
-	route.GET("/", func(c *gin.Context) {
-		type RouteInfo struct {
-			Method  string
-			Path    string
-			Handler string
-		}
-		routes := []RouteInfo{}
-		for _, e := range route.Routes() {
-			routes = append(routes, RouteInfo{
-				Method:  e.Method,
-				Path:    e.Path,
-				Handler: e.Handler,
-			})
-		}
-		c.JSON(
-			http.StatusOK,
-			routes,
-		)
-	})
+	router = route
+	route.GET("/", RouteList)
+}
+
+func RouteList(c *gin.Context) {
+	type RouteInfo struct {
+		Method  string
+		Path    string
+		Handler string
+	}
+	routes := []RouteInfo{}
+	for _, e := range router.Routes() {
+		routes = append(routes, RouteInfo{
+			Method:  e.Method,
+			Path:    e.Path,
+			Handler: e.Handler,
+		})
+	}
+	c.JSON(
+		http.StatusOK,
+		routes,
+	)
 }
 
 func ApiResource(route *gin.Engine, resource string, ctls ApiResourceStruct) {

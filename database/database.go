@@ -12,6 +12,16 @@ import (
 
 var Db *gorm.DB
 
+func DSN() string {
+	return fmt.Sprintf(
+		"%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
+		setting.Database.Username,
+		setting.Database.Password,
+		setting.Database.Host,
+		setting.Database.Database,
+	)
+}
+
 func Setup() {
 	var err error
 	var logMode = logger.Error
@@ -20,13 +30,7 @@ func Setup() {
 	}
 	Db, err = gorm.Open(
 		mysql.New(mysql.Config{
-			DSN: fmt.Sprintf(
-				"%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
-				setting.Database.Username,
-				setting.Database.Password,
-				setting.Database.Host,
-				setting.Database.Database,
-			)},
+			DSN: DSN()},
 		),
 		&gorm.Config{
 			Logger: logger.Default.LogMode(logMode),
