@@ -1,16 +1,21 @@
 package database
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/fumeapp/tonic/setting"
+	"github.com/octoper/go-ray"
+	"github.com/opensearch-project/opensearch-go"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 var Db *gorm.DB
+var Es *opensearch.Client
 
 func DSN() string {
 	return fmt.Sprintf(
@@ -38,9 +43,23 @@ func Setup() {
 	)
 
 	if err != nil {
-		log.Fatalf("models.Setup err: %v", err)
+		log.Fatalf("gorm.DB err: %v", err)
 	}
 
+	ray.Ray(setting.Opensearch)
+
+	Es, err = opensearch.NewClient(opensearch.Config{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+		Addresses: []string{setting.Opensearch.Address},
+		Username:  setting.Opensearch.Username,
+		Password:  setting.Opensearch.Password,
+	})
+
+	if err != nil {
+		log.Fatalf("opensearch.NewClient err: %v", err)
+	}
 }
 
 func Truncate() {

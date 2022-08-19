@@ -7,8 +7,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var Database = &DatabaseSetting{}
-
 func env(key string, config string) string {
 	if os.Getenv(key) != "" {
 		return os.Getenv(key)
@@ -16,12 +14,12 @@ func env(key string, config string) string {
 	return config
 }
 
-func Setup() *DatabaseSetting {
+func Setup() (*DatabaseSetting, *OpensearchSetting) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	return DatabaseSetup()
+	return DatabaseSetup(), OpensearchSetup()
 }
 
 func IsDev() bool {

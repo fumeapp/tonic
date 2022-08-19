@@ -11,6 +11,8 @@ type DatabaseSetting struct {
 	Logging     string
 }
 
+var Database = &DatabaseSetting{}
+
 func DatabaseSetup() *DatabaseSetting {
 
 	Database.Logging = env("DB_LOGGING", "false")

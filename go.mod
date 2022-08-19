@@ -4,11 +4,15 @@ go 1.19
 
 require (
 	github.com/joho/godotenv v1.4.0
+	github.com/opensearch-project/opensearch-go v1.1.0
 	gorm.io/gorm v1.23.8
 )
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/gomarkdown/markdown v0.0.0-20210208175418-bda154fe17d8 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/google/uuid v1.2.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
@@ -27,6 +31,7 @@ require (
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/octoper/go-ray v0.1.4
 	github.com/pelletier/go-toml/v2 v2.0.3 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8 // indirect
