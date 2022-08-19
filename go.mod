@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
 	github.com/gomarkdown/markdown v0.0.0-20210208175418-bda154fe17d8 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/uuid v1.2.0 // indirect

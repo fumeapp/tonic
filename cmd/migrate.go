@@ -30,7 +30,7 @@ to quickly create a Cobra application.`,
 		fmt.Println("migrate called")
 
 		if _, err := os.Stat("./database/migrations"); os.IsNotExist(err) {
-			fmt.Println("No migration directory found")
+			log.Fatal("No migration directory database/migrations found")
 		}
 
 		setting.Setup()
@@ -41,7 +41,9 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatal(err)
 		}
-		m.Up()
+		if err := m.Up(); err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
