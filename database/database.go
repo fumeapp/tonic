@@ -26,6 +26,10 @@ func DSN() string {
 	)
 }
 
+func DURL() string {
+	return "mysql://" + DSN()
+}
+
 func Setup() {
 	var err error
 	var logMode = logger.Error

@@ -2,7 +2,7 @@
 # Tonic Web Framework
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/fumeapp/skele/main/skele.jpg" width="300" />
+  <img src="https://raw.githubusercontent.com/fumeapp/tonic/main/tonic.jpg" width="300" />
 </p>
 
 [![Go Reference][1]][2]
