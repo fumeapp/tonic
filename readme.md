@@ -5,8 +5,6 @@
   <img src="https://raw.githubusercontent.com/fumeapp/tonic/main/tonic.jpg" width="300" />
 </p>
 
-> early development
-
 Tonic is a web application framework that supplies tools and libraries on top of Gin to give an expressive, elegant syntax.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/fumeapp/tonic.svg)](https://pkg.go.dev/github.com/fumeapp/tonic)
@@ -21,6 +19,8 @@ Tonic is a web application framework that supplies tools and libraries on top of
 Connect to both a MySQL and OpenSearch database - other engines coming soon.
 * use `.env.example` to make your own `.env` for yoru environments
 * access your databases via the `database` package
+* `database.Db` is your mysql connection
+* `database.Os` is your opensearch connection
 
 ```go
 import (
@@ -29,6 +29,7 @@ import (
 
 func main() {
   Db.Create(&models.User{Name: "John Doe"})
+  fmt.Println(Os.Info())
 }
 ```
 
