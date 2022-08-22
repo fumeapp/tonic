@@ -9,16 +9,8 @@ require (
 )
 
 require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
-	github.com/gomarkdown/markdown v0.0.0-20210208175418-bda154fe17d8 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
-	github.com/google/uuid v1.2.0 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/octoper/go-ray v0.1.4 // indirect
-	github.com/spf13/cobra v1.5.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
