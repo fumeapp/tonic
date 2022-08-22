@@ -1,7 +1,6 @@
 package setting
 
 import (
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -15,10 +14,7 @@ func env(key string, config string) string {
 }
 
 func Setup() (*DatabaseSetting, *OpensearchSetting) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
 	return DatabaseSetup(), OpensearchSetup()
 }
 
