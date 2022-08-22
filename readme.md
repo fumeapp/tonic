@@ -17,22 +17,42 @@ The Tonic web framework supplies tools and libraries on top of Gin.
 [![GitHub license](https://img.shields.io/github/license/fumeapp/tonic)](https://github.com/fumeapp/tonic/blob/main/license)
 
 
+## Database Connectivity
+Connect to both a MySQL and OpenSearch database - other engines coming soon.
+* use `.env.example` to make your own `.env` for yoru environments
+* access your databases via the `database` package
+
+```go
+import (
+  . "github.com/fumeapp/tonic/database"
+)
+
+func main() {
+  Db.Create(&models.User{Name: "John Doe"})
+}
+```
+
 ## Router Features
 ### Route Model Binding
 
 Easily bind a gorm Model to a controller and have Index, Show, Update, and Delete methods
 
 ```go
-	route.Init(engine)
-	route.ApiResource(engine, "user", &models.User{}, controllers.UserResources())
+route.Init(engine)
+route.ApiResource(engine, "user", &models.User{}, controllers.UserResources())
 ```
+* 4 Routes will be created:
+* `GET /user` binds to `Index`
+* `GET /user/:id` binds to `Show`
+* `PUT /user/:id` binds to `Update`
+* `DELETE /user/:id` binds to `Delete`
 
-* Show and Update will have the model passed in as a parameter ready to be re-casted, otherwise return a 404
+* Show, Update, and Delete will have the model passed in as a parameter ready to be re-casted, otherwise return a 404
 
 ```go
 func index(c *gin.Context) {
   var users = []models.User{}
-  Db.Find(&users)
+  database.Db.Find(&users)
 	c.JSON( http.StatusOK, users)
 }
 

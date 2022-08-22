@@ -15,17 +15,18 @@ type ApiResourceStruct struct {
 	Index  func(c *gin.Context)
 	Show   func(c *gin.Context, value any)
 	Update func(c *gin.Context, value any)
+	Delete func(c *gin.Context, value any)
 }
 
 var (
-	router *gin.Engine
-	model any
+	router    *gin.Engine
+	model     any
 	resources ApiResourceStruct
 )
 
 func Init(route *gin.Engine) {
 	router = route
-	if (setting.IsDev() || setting.IsDebug()) {
+	if setting.IsDev() || setting.IsDebug() {
 		Routes(router)
 	}
 }
@@ -52,7 +53,7 @@ func RouteList(c *gin.Context) {
 	c.JSON(http.StatusOK, routes)
 }
 
-func show (c *gin.Context) {
+func bind(c *gin.Context) {
 	if isNumeric(c) {
 		value, error := retrieve(c)
 		if error != nil {
@@ -65,25 +66,13 @@ func show (c *gin.Context) {
 	}
 }
 
-func update (c *gin.Context) {
-	if isNumeric(c)  {
-		value, error := retrieve(c)
-		if error != nil {
-			invalid(c)
-		} else {
-			resources.Update(c, value)
-		}
-	} else {
-		invalid(c)
-	}
-}
-
 func ApiResource(route *gin.Engine, n string, _model any, _resources ApiResourceStruct) {
 	resources = _resources
 	model = _model
 	route.GET("/"+n, resources.Index)
-	route.GET("/"+n+"/:id", show)
-	route.PUT("/"+n+"/:id", update)
+	route.GET("/"+n+"/:id", bind)
+	route.PUT("/"+n+"/:id", bind)
+	route.DELETE("/"+n+"/:id", bind)
 }
 
 func isNumeric(c *gin.Context) bool {
