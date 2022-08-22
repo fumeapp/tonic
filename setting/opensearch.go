@@ -10,9 +10,9 @@ var Opensearch = &OpensearchSetting{}
 
 func OpensearchSetup() *OpensearchSetting {
 
-	Opensearch.Address = env("ES_HOST", "http://localhost:9200")
-	Opensearch.Username = env("ES_USERNAME", "admin")
-	Opensearch.Password = env("ES_PASSWORD", "admin")
+	Opensearch.Address = env("OS_HOST", "http://localhost:9200")
+	Opensearch.Username = env("OS_USERNAME", "admin")
+	Opensearch.Password = env("OS_PASSWORD", "admin")
 
 	return Opensearch
 }
