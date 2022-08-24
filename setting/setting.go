@@ -14,7 +14,8 @@ func env(key string, config string) string {
 }
 
 func Setup() (*DatabaseSetting, *OpensearchSetting) {
-	godotenv.Load()
+	if err := godotenv.Load(); err != nil {
+	}
 	return DatabaseSetup(), OpensearchSetup()
 }
 
