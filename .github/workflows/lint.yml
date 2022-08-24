@@ -1,9 +1,4 @@
 name: lint
-on:
-  push:
-    branches-ignore:
-    - staging
-    - production
 jobs:
   lint:
     name: lint

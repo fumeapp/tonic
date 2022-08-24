@@ -1,9 +1,6 @@
 name: format
 on:
   push:
-    branches-ignore:
-    - staging
-    - production
 jobs:
   format:
     name: format
