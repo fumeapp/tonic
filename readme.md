@@ -78,7 +78,7 @@ route.ApiResource(engine, "user", &models.User{}, controllers.UserResources())
 func index(c *gin.Context) {
   var users = []models.User{}
   database.Db.Find(&users)
-	render.Render(c, users)
+  render.Render(c, users)
 }
 
 func show(c *gin.Context, value any) {
