@@ -26,13 +26,14 @@ Define an endpoint that you can call locally and remotely.
 import (
    fume "github.com/fumeapp/gin"
    "github.com/fumeapp/tonic"
+   "github.com/fumeapp/tonic/render"
    "github.com/gin-gonic/gin"
 )
 
 func main() {
    tonic.Init()
    routes := gin.New()
-   routes.GET("/", func(c *gin.Context) { c.JSON(200, gin.H{"message": "Hello World"}) })
+   routes.GET("/", func(c *gin.Context) { render.Render({"message": "Hello World"}) })
    fume.Start(routes, fume.Options{})
 }
 ```
