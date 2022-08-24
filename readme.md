@@ -82,16 +82,16 @@ func index(c *gin.Context) {
 }
 
 func show(c *gin.Context, value any) {
-	user := value.(*models.User)
-	render.Render(c, user)
+  user := value.(*models.User)
+  render.Render(c, user)
 }
 
 func update(c *gin.Context, value any) {
-	user := value.(*models.User)
-	render.Render(c, user)
+  user := value.(*models.User)
+  render.Render(c, user)
 }
 
 func UserResources() route.ApiResourceStruct {
-	return route.ApiResourceStruct{Index: index, Show: show, Update: update}
+  return route.ApiResourceStruct{Index: index, Show: show, Update: update}
 }
 ```
