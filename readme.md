@@ -33,7 +33,7 @@ import (
 func main() {
    tonic.Init()
    routes := gin.New()
-   routes.GET("/", func(c *gin.Context) { render.Render({"message": "Hello World"}) })
+   routes.GET("/", func(c *gin.Context) { render.Render(c, {"message": "Hello World"}) })
    fume.Start(routes, fume.Options{})
 }
 ```
@@ -78,17 +78,17 @@ route.ApiResource(engine, "user", &models.User{}, controllers.UserResources())
 func index(c *gin.Context) {
   var users = []models.User{}
   database.Db.Find(&users)
-	c.JSON( http.StatusOK, users)
+	render.Render(c, users)
 }
 
 func show(c *gin.Context, value any) {
 	user := value.(*models.User)
-	c.JSON(http.StatusOK, user)
+	render.Render(c, user)
 }
 
 func update(c *gin.Context, value any) {
 	user := value.(*models.User)
-	c.JSON(http.StatusOK, user)
+	render.Render(c, user)
 }
 
 func UserResources() route.ApiResourceStruct {
