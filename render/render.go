@@ -1,13 +1,30 @@
 package render
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+	"time"
 
-func Error(c *gin.Context, message string) {
-	c.JSON(500, gin.H{"error": message})
-	return
+	"github.com/fumeapp/tonic"
+	"github.com/gin-gonic/gin"
+)
+
+func Success(c *gin.Context, message string, data any) {
+	c.JSON(http.StatusAccepted, gin.H{
+		"success": true,
+		"message": message,
+		"data":    data,
+	})
 }
 
-func Render(c *gin.Context, data gin.H) {
-	c.JSON(200, data)
-	return
+func Error(c *gin.Context, message string) {
+	c.JSON(http.StatusBadRequest, gin.H{"error": message})
+	c.Abort()
+}
+
+func Render(c *gin.Context, data any) {
+	result := gin.H{
+		"benchmark": (time.Now().UnixMicro() - tonic.Before),
+		"data":      data,
+	}
+	c.JSON(200, result)
 }

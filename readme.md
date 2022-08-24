@@ -14,10 +14,32 @@ Tonic is a web application framework that supplies tools and libraries on top of
 [![GitHub issues](https://img.shields.io/github/issues/fumeapp/tonic)](https://github.com/fumeapp/tonic/issues)
 [![GitHub license](https://img.shields.io/github/license/fumeapp/tonic)](https://github.com/fumeapp/tonic/blob/main/license)
 
+## Getting Started
 
-## Database Connectivity
+### Endpoint Configuration
+Define an endpoint that you can call locally and remotely.
+* In this example we bind `/` to a standard JSON response
+* You can specify params in the bind with `:` - ex: `/search/:query` can be access via `c.Param("query")`
+* With `tonic.Init()` your database and other connections are ready to use
+
+```go
+import (
+   fume "github.com/fumeapp/gin"
+   "github.com/fumeapp/tonic"
+   "github.com/gin-gonic/gin"
+)
+
+func main() {
+   tonic.Init()
+   routes := gin.New()
+   routes.GET("/", func(c *gin.Context) { c.JSON(200, gin.H{"message": "Hello World"}) })
+   fume.Start(routes, fume.Options{})
+}
+```
+
+### Database Connectivity
 Connect to both a MySQL and OpenSearch database - other engines coming soon.
-* use `.env.example` to make your own `.env` for yoru environments
+* use `.env.example` to make your own `.env` for your environments
 * access your databases via the `database` package
 * `database.Db` is your mysql connection
 * `database.Os` is your opensearch connection
@@ -28,6 +50,7 @@ import (
 )
 
 func main() {
+  tonic.Init()
   Db.Create(&models.User{Name: "John Doe"})
   fmt.Println(Os.Info())
 }
