@@ -13,10 +13,10 @@ func env(key string, config string) string {
 	return config
 }
 
-func Setup() (*DatabaseSetting, *OpensearchSetting) {
+func Setup() (*CoreSetting, *DatabaseSetting, *OpensearchSetting) {
 	if err := godotenv.Load(); err != nil {
 	}
-	return DatabaseSetup(), OpensearchSetup()
+	return CoreSetup(), DatabaseSetup(), OpensearchSetup()
 }
 
 func IsDev() bool {
