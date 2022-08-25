@@ -18,7 +18,7 @@ var Os *opensearch.Client
 
 func DSN() string {
 	return fmt.Sprintf(
-		"%s:%s@tcp(%s)/%s",
+		"%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		setting.Database.Username,
 		setting.Database.Password,
 		setting.Database.Host,
