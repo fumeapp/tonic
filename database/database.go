@@ -33,33 +33,38 @@ func DURL() string {
 func Setup() {
 	var err error
 	var logMode = logger.Error
+
 	if setting.Database.Logging == "true" {
 		logMode = logger.Info
 	}
-	Db, err = gorm.Open(
-		mysql.New(mysql.Config{
-			DSN: DSN()},
-		),
-		&gorm.Config{
-			Logger: logger.Default.LogMode(logMode),
-		},
-	)
 
-	if err != nil {
-		log.Fatalf("gorm.DB err: %v", err)
+	if setting.Database.Connect == "true" {
+		Db, err = gorm.Open(
+			mysql.New(mysql.Config{
+				DSN: DSN()},
+			),
+			&gorm.Config{
+				Logger: logger.Default.LogMode(logMode),
+			},
+		)
+		if err != nil {
+			log.Fatalf("gorm.DB err: %v", err)
+		}
 	}
 
-	Os, err = opensearch.NewClient(opensearch.Config{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-		Addresses: []string{setting.Opensearch.Address},
-		Username:  setting.Opensearch.Username,
-		Password:  setting.Opensearch.Password,
-	})
+	if setting.Opensearch.Connect == "true" {
+		Os, err = opensearch.NewClient(opensearch.Config{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+			Addresses: []string{setting.Opensearch.Address},
+			Username:  setting.Opensearch.Username,
+			Password:  setting.Opensearch.Password,
+		})
 
-	if err != nil {
-		log.Fatalf("opensearch.NewClient err: %v", err)
+		if err != nil {
+			log.Fatalf("opensearch.NewClient err: %v", err)
+		}
 	}
 }
 

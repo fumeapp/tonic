@@ -1,7 +1,7 @@
 package setting
 
 type DatabaseSetting struct {
-	Driver      string
+	Connect     string
 	Host        string
 	Database    string
 	Username    string
@@ -14,8 +14,8 @@ var Database = &DatabaseSetting{}
 
 func DatabaseSetup() *DatabaseSetting {
 
+	Database.Connect = env("DB_CONNECT", "false")
 	Database.Logging = env("DB_LOGGING", "false")
-	Database.Driver = env("DB_DRIVER", "mysql")
 	Database.Host = env("DB_HOST", "localhost")
 	Database.Database = env("DB_DATABASE", "tonic")
 	Database.Username = env("DB_USERNAME", "root")
