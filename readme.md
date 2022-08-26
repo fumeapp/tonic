@@ -16,12 +16,12 @@ Tonic is a web application framework that supplies tools and libraries on top of
 
 ## Getting Started
 
-### environment variables
+### Environment variables
 
 Take a look at [.env.example](https://github.com/fumeapp/tonic/blob/main/.env.example) for an example of how to set up environment variables. Copy it to `.env` and modify them to your needs
 * Any ENV variable you do not set will default to what is in `.env.example`
-* Make sure to set DB_CONNECT=true if you want to use the MySQL database
-* Make sure to set OS_CONNECT=true if you want to use the Opensearch database
+* Make sure to set `DB_CONNECT=true` if you want to use the MySQL database
+* Make sure to set `OS_CONNECT=true` if you want to use the Opensearch database
 
 
 ### Endpoint Configuration
