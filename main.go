@@ -3,6 +3,7 @@ package tonic
 import (
 	"time"
 
+	"github.com/fumeapp/tonic/aws"
 	"github.com/fumeapp/tonic/database"
 	"github.com/fumeapp/tonic/setting"
 )
@@ -13,4 +14,5 @@ func Init() {
 	Before = time.Now().UnixMicro()
 	setting.Setup()
 	database.Setup()
+	aws.Setup()
 }
