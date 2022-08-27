@@ -3,7 +3,7 @@ package aws
 import (
 	"bytes"
 	"context"
-	"crypto/sha256"
+	"crypto/md5"
 	"encoding/hex"
 	"errors"
 	"io"
@@ -66,7 +66,7 @@ func Upload(url string) (string, error) {
 		return "", errors.New("unable to detect Content Type: " + contentType)
 	}
 
-	hasher := sha256.New()
+	hasher := md5.New()
 
 	if _, err := io.Copy(hasher, response.Body); err != nil {
 		return "", err
