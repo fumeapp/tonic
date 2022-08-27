@@ -8,6 +8,7 @@ import (
 	"errors"
 
 	"github.com/fumeapp/tonic/database"
+	"github.com/fumeapp/tonic/render"
 	"github.com/fumeapp/tonic/setting"
 	"github.com/gin-gonic/gin"
 )
@@ -50,7 +51,7 @@ func RouteList(c *gin.Context) {
 			Handler: e.Handler,
 		})
 	}
-	c.JSON(http.StatusOK, routes)
+	render.Render(c, routes)
 }
 
 func Benchmark(c *gin.Context) {
