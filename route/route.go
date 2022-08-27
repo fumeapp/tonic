@@ -3,6 +3,7 @@ package route
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"errors"
 
@@ -25,9 +26,8 @@ var (
 )
 
 func Init(route *gin.Engine) {
-	router = route
 	if setting.IsDev() || setting.IsDebug() {
-		Routes(router)
+		Routes(route)
 	}
 }
 
@@ -51,6 +51,10 @@ func RouteList(c *gin.Context) {
 		})
 	}
 	c.JSON(http.StatusOK, routes)
+}
+
+func Benchmark(c *gin.Context) {
+	c.Set("tonicBenchmark", time.Now().UnixMicro())
 }
 
 func bind(c *gin.Context) {

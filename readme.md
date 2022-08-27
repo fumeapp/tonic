@@ -20,8 +20,6 @@ Tonic is a web application framework that supplies tools and libraries on top of
 
 Take a look at [.env.example](https://github.com/fumeapp/tonic/blob/main/.env.example) for an example of how to set up environment variables. Copy it to `.env` and modify them to your needs
 * Any ENV variable you do not set will default to what is in `.env.example`
-* Make sure to set `DB_CONNECT=true` if you want to use the MySQL database
-* Make sure to set `OS_CONNECT=true` if you want to use the Opensearch database
 
 
 ### Endpoint Configuration
@@ -39,8 +37,7 @@ import (
 )
 
 func main() {
-   tonic.Init()
-   routes := gin.New()
+   routes := tonic.Init()
    routes.GET("/", func(c *gin.Context) { render.Render(c, {"message": "Hello World"}) })
    fume.Start(routes, fume.Options{})
 }
@@ -48,9 +45,10 @@ func main() {
 
 ### Database Connectivity
 Connect to both a MySQL and OpenSearch database - other engines coming soon.
-* use `.env.example` to make your own `.env` for your environments
 * access your databases via the `database` package
+* Make sure to set `DB_CONNECT=true` if you want to use the MySQL database
 * `database.Db` is your mysql connection
+* Make sure to set `OS_CONNECT=true` if you want to use the Opensearch database
 * `database.Os` is your opensearch connection
 
 ```go
@@ -64,6 +62,19 @@ func main() {
   fmt.Println(Os.Info())
 }
 ```
+
+## AWS Access and Configuration
+You can find the following `.env` variables in [.env.example](https://github.com/fumeapp/tonic/blob/main/.env.example)
+
+```
+AWS_CONNECT=true
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=us-east-1
+AWS_BUCKET=
+```
+* You can access your AWS Config via `aws.Config`, your AWS S3 client via `aws.S3`, and your [Upload Manager](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/s3/manager) via `aws.Uploader`
+* An upload helper can be found as `aws.Upload(url)` - this will upload a file to your bucket, mark it public, and return the URL
 
 ## Router Features
 ### Route Model Binding

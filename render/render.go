@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fumeapp/tonic"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,8 +21,10 @@ func Error(c *gin.Context, message string) {
 }
 
 func Render(c *gin.Context, data any) {
+	benchmark, _ := c.Get("tonicBenchmark")
+	diff := (float64(time.Now().UnixMicro() - benchmark.(int64))) / 1000000
 	result := gin.H{
-		"benchmark": (time.Now().UnixMicro() - tonic.Before),
+		"benchmark": diff,
 		"data":      data,
 	}
 	c.JSON(200, result)

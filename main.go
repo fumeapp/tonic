@@ -1,18 +1,20 @@
 package tonic
 
 import (
-	"time"
-
 	"github.com/fumeapp/tonic/aws"
 	"github.com/fumeapp/tonic/database"
+	"github.com/fumeapp/tonic/route"
 	"github.com/fumeapp/tonic/setting"
+	"github.com/gin-gonic/gin"
 )
 
-var Before int64
+func Init() *gin.Engine {
 
-func Init() {
-	Before = time.Now().UnixMicro()
 	setting.Setup()
 	database.Setup()
 	aws.Setup()
+
+	engine := gin.New()
+	engine.Use(route.Benchmark)
+	return engine
 }
