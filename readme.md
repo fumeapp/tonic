@@ -5,7 +5,7 @@
   <img src="https://raw.githubusercontent.com/fumeapp/tonic/main/tonic.jpg" width="300" />
 </p>
 
-Tonic is a web application framework that supplies tools and libraries on top of Gin to give an expressive, elegant syntax.
+Tonic is a web application framework that supplies tools and libraries to give an expressive, elegant syntax.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/fumeapp/tonic.svg)](https://pkg.go.dev/github.com/fumeapp/tonic)
 [![Go Report Card](https://goreportcard.com/badge/github.com/fumeapp/tonic)](https://goreportcard.com/report/github.com/fumeapp/tonic)
