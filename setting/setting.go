@@ -13,14 +13,10 @@ func env(key string, config string) string {
 	return config
 }
 
-func Setup() (
-	*CoreSetting,
-	*DatabaseSetting,
-	*OpensearchSetting,
-	*AWsSetting,
-) {
-	_ = godotenv.Load()
-	return CoreSetup(), DatabaseSetup(), OpensearchSetup(), AwsSetup()
+func Setup() (*CoreSetting, *DatabaseSetting, *OpensearchSetting) {
+	if err := godotenv.Load(); err != nil {
+	}
+	return CoreSetup(), DatabaseSetup(), OpensearchSetup()
 }
 
 func IsDev() bool {
@@ -28,8 +24,4 @@ func IsDev() bool {
 }
 func IsDebug() bool {
 	return env("APP_DEBUG", "false") == "true"
-}
-
-func GetWebUrl() string {
-	return env("WEB_URL", "http://localhost:3000")
 }

@@ -10,30 +10,46 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/aws/aws-sdk-go-v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/ses"
+	"github.com/aws/aws-sdk-go-v2/service/ses/types"
 
 	"github.com/fumeapp/tonic/setting"
 )
 
-var Config *config.Config
-var S3 *s3.Client
-var Uploader *manager.Uploader
-
-func Setup() {
+func cfg() (aws.Config, error) {
 	if setting.Aws.Connect != "true" {
-		return
+		errors.New("AWS_CONNECT set to false")
 	}
-	Config, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		errors.New("failed to load AWS config " + err.Error())
+	}
+
+	return cfg, nil
+}
+
+func S3() *s3.Client {
+	cfg, err := cfg()
 	if err != nil {
 		log.Fatalf("failed to load AWS config, %v", err)
 	}
+	return s3.NewFromConfig(cfg)
+}
 
-	S3 = s3.NewFromConfig(Config)
-	Uploader = manager.NewUploader(S3)
+func Uploader() *manager.Uploader {
+	return manager.NewUploader(S3())
+}
+
+func SES() *ses.Client {
+	cfg, err := cfg()
+	if err != nil {
+		log.Fatalf("failed to load AWS config, %v", err)
+	}
+	return ses.NewFromConfig(cfg)
 }
 
 // Uploads a file to S3 naming it after a hash of the file contents.
@@ -74,9 +90,7 @@ func Upload(url string) (string, error) {
 
 	hash := hex.EncodeToString(hasher.Sum(nil))
 
-	uploader := manager.NewUploader(S3)
-
-	result, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
+	result, err := Uploader().Upload(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(setting.Aws.Bucket),
 		Key:         aws.String(hash + "." + extension),
 		Body:        io.NopCloser(bytes.NewBuffer(bodyBytes)),
@@ -89,5 +103,26 @@ func Upload(url string) (string, error) {
 	}
 
 	return result.Location, nil
+}
 
+func SendEmail(to, subject, body string) error {
+	_, err := SES().SendEmail(context.TODO(), &ses.SendEmailInput{
+		Destination: &types.Destination{
+			ToAddresses: []string{
+				to,
+			},
+		},
+		Message: &types.Message{
+			Subject: &types.Content{
+				Data: &subject,
+			},
+			Body: &types.Body{
+				Html: &types.Content{
+					Charset: aws.String("UTF-8"),
+					Data:    aws.String(body),
+				},
+			},
+		},
+	})
+	return err
 }
