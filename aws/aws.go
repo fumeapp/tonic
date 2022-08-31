@@ -105,13 +105,14 @@ func Upload(url string) (string, error) {
 	return result.Location, nil
 }
 
-func SendEmail(to, subject, body string) error {
-	_, err := SES().SendEmail(context.TODO(), &ses.SendEmailInput{
+func SendEmail(to, subject, body string) (*ses.SendEmailOutput, error) {
+	return SES().SendEmail(context.TODO(), &ses.SendEmailInput{
 		Destination: &types.Destination{
 			ToAddresses: []string{
 				to,
 			},
 		},
+		Source: aws.String("noreply@vulncheck.com"),
 		Message: &types.Message{
 			Subject: &types.Content{
 				Data: &subject,
@@ -124,5 +125,4 @@ func SendEmail(to, subject, body string) error {
 			},
 		},
 	})
-	return err
 }
