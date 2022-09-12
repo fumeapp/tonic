@@ -13,13 +13,13 @@ func env(key string, config string) string {
 	return config
 }
 
-func Setup() (*CoreSetting, *DatabaseSetting, *OpensearchSetting) {
+func Setup() (*CoreSetting, *DatabaseSetting, *OpensearchSetting, *AWsSetting) {
 
 	if os.Getenv("_HANDLER") == "" {
 		if err := godotenv.Load(); err != nil {
 		}
 	}
-	return CoreSetup(), DatabaseSetup(), OpensearchSetup()
+	return CoreSetup(), DatabaseSetup(), OpensearchSetup(), AwsSetup()
 }
 
 func IsDev() bool {
