@@ -15,9 +15,7 @@ func env(key string, config string) string {
 
 func Setup() (*CoreSetting, *DatabaseSetting, *OpensearchSetting, *AWsSetting) {
 
-	if os.Getenv("_HANDLER") == "" {
-		if err := godotenv.Load(); err != nil {
-		}
+	if err := godotenv.Load(); err != nil {
 	}
 	return CoreSetup(), DatabaseSetup(), OpensearchSetup(), AwsSetup()
 }
