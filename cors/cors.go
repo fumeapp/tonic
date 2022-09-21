@@ -2,16 +2,13 @@ package cors
 
 import (
 	"github.com/fumeapp/tonic/setting"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-func New() gin.HandlerFunc {
+func New() fiber.Handler {
 	return cors.New(cors.Config{
-		AllowOrigins:     []string{setting.Core.WebURL},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowOrigins:     setting.Core.WebURL,
 		AllowCredentials: true,
-		MaxAge:           0,
 	})
 }

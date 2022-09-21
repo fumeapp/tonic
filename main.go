@@ -4,15 +4,15 @@ import (
 	"github.com/fumeapp/tonic/database"
 	"github.com/fumeapp/tonic/route"
 	"github.com/fumeapp/tonic/setting"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
-func Init() *gin.Engine {
+func Init(config fiber.Config) *fiber.App {
 
 	setting.Setup()
 	database.Setup()
 
-	engine := gin.New()
-	engine.Use(route.Benchmark)
-	return engine
+	app := fiber.New(config)
+	app.Use(route.Benchmark())
+	return app
 }
