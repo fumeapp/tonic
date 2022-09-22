@@ -3,13 +3,10 @@ package route
 import (
 	"errors"
 	"net/http"
-	"reflect"
-	"runtime"
 	"strconv"
 	"time"
 
 	"github.com/fumeapp/tonic/database"
-	"github.com/fumeapp/tonic/render"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -30,35 +27,6 @@ func Benchmark(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func List(c *fiber.Ctx) error {
-
-	type RouteInfo struct {
-		Method   string
-		Name     string
-		Path     string
-		Handlers string
-	}
-
-	routes := []RouteInfo{}
-
-	for _, routeStack := range c.App().Stack() {
-		for _, route := range routeStack {
-			var handlers string
-			for _, handler := range route.Handlers {
-				handlers += runtime.FuncForPC(reflect.ValueOf(handler).Pointer()).Name() + " "
-			}
-			routes = append(routes, RouteInfo{
-				Method:   route.Method,
-				Name:     route.Name,
-				Path:     route.Path,
-				Handlers: handlers,
-			})
-		}
-	}
-
-	return render.Render(c, routes)
-}
-
 func bind(c *fiber.Ctx) error {
 	if isNumeric(c) {
 		value, error := retrieve(c)
@@ -75,10 +43,10 @@ func bind(c *fiber.Ctx) error {
 func ApiResource(app *fiber.App, n string, _model any, _resources ApiResourceStruct) {
 	resources = _resources
 	model = _model
-	app.Get("/"+n, resources.Index)
-	app.Get("/"+n+"/:id", bind)
-	app.Put("/"+n+"/:id", bind)
-	app.Delete("/"+n+"/:id", bind)
+	app.Get("/"+n, resources.Index).Name(n + "Index")
+	app.Get("/"+n+"/:id", bind).Name(n + "Show")
+	app.Put("/"+n+"/:id", bind).Name(n + "Update")
+	app.Delete("/"+n+"/:id", bind).Name(n + "Delete")
 }
 
 func isNumeric(c *fiber.Ctx) bool {

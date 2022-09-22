@@ -41,6 +41,11 @@ func Template(c *fiber.Ctx, name string, data any) string {
 	return buffer.String()
 }
 
+func HTML(c *fiber.Ctx, html string) error {
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTMLCharsetUTF8)
+	return c.SendString(html)
+}
+
 func Render(c *fiber.Ctx, data any) error {
 	return c.Status(http.StatusAccepted).JSON(H{
 		"benchmark": bench(c),
