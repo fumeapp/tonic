@@ -15,6 +15,9 @@ func Init(config *fiber.Config) *fiber.App {
 
 	app := fiber.New(*config)
 	app.Use(route.Benchmark)
+	if setting.IsDev() {
+		app.Get("/", route.List)
+	}
 
 	database.Setup()
 

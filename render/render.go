@@ -1,14 +1,15 @@
 package render
 
 import (
+	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"reflect"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gofiber/fiber/v2"
-	"github.com/octoper/go-ray"
 )
 
 type H map[string]any
@@ -32,6 +33,14 @@ func Error(c *fiber.Ctx, errors any) error {
 	return c.Status(http.StatusBadRequest).JSON(H{"error": true, "errors": errors})
 }
 
+func Template(c *fiber.Ctx, name string, data any) string {
+	buffer := new(bytes.Buffer)
+	if err := c.App().Config().Views.Render(buffer, name, data); err != nil {
+		log.Fatal(err)
+	}
+	return buffer.String()
+}
+
 func Render(c *fiber.Ctx, data any) error {
 	return c.Status(http.StatusAccepted).JSON(H{
 		"benchmark": bench(c),
@@ -41,7 +50,6 @@ func Render(c *fiber.Ctx, data any) error {
 
 func bench(c *fiber.Ctx) float64 {
 	benchmark := c.Locals("tonicBenchmark")
-	ray.Ray(benchmark)
 	diff := (float64(time.Now().UnixMicro() - benchmark.(int64))) / 1000000
 	return diff
 }
