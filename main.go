@@ -7,12 +7,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Init(config fiber.Config) *fiber.App {
+func Init(config *fiber.Config) *fiber.App {
 
 	setting.Setup()
+
+	config.EnablePrintRoutes = setting.IsDev()
+
+	app := fiber.New(*config)
+	app.Use(route.Benchmark)
+
 	database.Setup()
 
-	app := fiber.New(config)
-	app.Use(route.Benchmark())
 	return app
 }

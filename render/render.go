@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gofiber/fiber/v2"
+	"github.com/octoper/go-ray"
 )
 
 type H map[string]any
@@ -40,6 +41,7 @@ func Render(c *fiber.Ctx, data any) error {
 
 func bench(c *fiber.Ctx) float64 {
 	benchmark := c.Locals("tonicBenchmark")
+	ray.Ray(benchmark)
 	diff := (float64(time.Now().UnixMicro() - benchmark.(int64))) / 1000000
 	return diff
 }

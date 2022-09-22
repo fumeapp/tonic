@@ -1,9 +1,12 @@
 package route
 
 import (
-	"fmt"
+	"errors"
+	"net/http"
+	"strconv"
 	"time"
 
+	"github.com/fumeapp/tonic/database"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,19 +18,15 @@ type ApiResourceStruct struct {
 }
 
 var (
-	router    *fiber.App
 	model     any
 	resources ApiResourceStruct
 )
 
-func Benchmark() fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		c.Locals("tonicBenchmark", fmt.Sprintf("%v", time.Now().UnixMicro()))
-		return c.Next()
-	}
+func Benchmark(c *fiber.Ctx) error {
+	c.Locals("tonicBenchmark", time.Now().UnixMicro())
+	return c.Next()
 }
 
-/*
 func bind(c *fiber.Ctx) error {
 	if isNumeric(c) {
 		value, error := retrieve(c)
@@ -41,7 +40,7 @@ func bind(c *fiber.Ctx) error {
 	}
 }
 
-func ApiResource(app *fiber.Ctx, n string, _model any, _resources ApiResourceStruct) {
+func ApiResource(app *fiber.App, n string, _model any, _resources ApiResourceStruct) {
 	resources = _resources
 	model = _model
 	app.Get("/"+n, resources.Index)
@@ -68,4 +67,3 @@ func retrieve(c *fiber.Ctx) (any, error) {
 func invalid(c *fiber.Ctx) error {
 	return c.Status(http.StatusNotFound).JSON(&fiber.Map{"message": "Resource not found"})
 }
-*/
