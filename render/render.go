@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -17,7 +16,7 @@ type H map[string]any
 func Success(c *fiber.Ctx, message string, data any) error {
 	return c.Status(http.StatusAccepted).JSON(H{
 		"benmchmark": bench(c),
-		"data": gin.H{
+		"data": H{
 			"type":    "success",
 			"success": true,
 			"message": message,

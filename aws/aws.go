@@ -21,12 +21,9 @@ import (
 )
 
 func cfg() (aws.Config, error) {
-	if setting.Aws.Connect != "true" {
-		errors.New("AWS_CONNECT set to false")
-	}
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
-		errors.New("failed to load AWS config " + err.Error())
+		return cfg, errors.New("failed to load AWS config " + err.Error())
 	}
 
 	return cfg, nil

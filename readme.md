@@ -30,15 +30,15 @@ Define an endpoint that you can call locally and remotely.
 
 ```go
 import (
-   fume "github.com/fumeapp/gin"
+   fume "github.com/fumeapp/fiber"
    "github.com/fumeapp/tonic"
    "github.com/fumeapp/tonic/render"
-   "github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-   routes := tonic.Init()
-   routes.GET("/", func(c *gin.Context) { render.Render(c, {"message": "Hello World"}) })
+   app := tonic.Init()
+   app.Get("/", func(c *fiber.Ctx) { render.Render(c, render.H{"message": "Hello World"}) })
    fume.Start(routes, fume.Options{})
 }
 ```
@@ -82,8 +82,8 @@ AWS_BUCKET=
 Easily bind a gorm Model to a controller and have Index, Show, Update, and Delete methods
 
 ```go
-route.Init(engine)
-route.ApiResource(engine, "user", &models.User{}, controllers.UserResources())
+route.Init(app)
+route.ApiResource(app, "user", &models.User{}, controllers.UserResources())
 ```
 * 4 Routes will be created:
 * `GET /user` binds to `Index`
@@ -94,18 +94,18 @@ route.ApiResource(engine, "user", &models.User{}, controllers.UserResources())
 * Show, Update, and Delete will have the model passed in as a parameter ready to be re-casted, otherwise return a 404
 
 ```go
-func index(c *gin.Context) {
+func index(c *fiber.Ctx) {
   var users = []models.User{}
   database.Db.Find(&users)
   render.Render(c, users)
 }
 
-func show(c *gin.Context, value any) {
+func show(c *fiber.Ctx, value any) {
   user := value.(*models.User)
   render.Render(c, user)
 }
 
-func update(c *gin.Context, value any) {
+func update(c *fiber.Ctx, value any) {
   user := value.(*models.User)
   render.Render(c, user)
 }
