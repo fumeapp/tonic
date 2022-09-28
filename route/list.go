@@ -78,6 +78,10 @@ func List(c *fiber.Ctx) error {
 		padding: 4px 6px;
 		border-right: 1px solid var(--gray-800);
 	}
+
+	.routes a {
+		color: var(--gray-300);
+	}
 	.routes tr { 
 		border: 1px solid var(--gray-800); 
 	}
@@ -97,7 +101,7 @@ func List(c *fiber.Ctx) error {
 		<tr>
 			<td>` + methodList(route.Methods) + `</td>
 			<td>` + route.Name + `</td>
-			<td>` + route.Path + `</td>
+			<td><a href="` + route.Path + `">` + route.Path + `</a></td>
 			<td>` + route.Handlers + `</td>
 		</tr>`
 	}
