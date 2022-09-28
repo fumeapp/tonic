@@ -13,16 +13,13 @@ import (
 
 type H map[string]any
 
-func Success(c *fiber.Ctx, message string, data any) error {
-	return c.Status(http.StatusAccepted).JSON(H{
-		"benmchmark": bench(c),
-		"data": H{
-			"type":    "success",
-			"success": true,
-			"message": message,
-			"data":    data,
-		},
-	})
+func Success(c *fiber.Ctx, message string, a ...interface{}) error {
+	output := H{"_benchmark": bench(c), "type": "success", "success": true, "message": message}
+	if len(a) > 0 {
+		output["data"] = a[0]
+	}
+	return c.Status(http.StatusAccepted).JSON(output)
+
 }
 
 func Error(c *fiber.Ctx, errors any) error {
@@ -45,11 +42,12 @@ func HTML(c *fiber.Ctx, html string) error {
 	return c.SendString(html)
 }
 
-func Render(c *fiber.Ctx, data any) error {
-	return c.Status(http.StatusAccepted).JSON(H{
-		"benchmark": bench(c),
-		"data":      data,
-	})
+func Render(c *fiber.Ctx, data any, a ...interface{}) error {
+	json := H{"_benchmark": bench(c), "data": data}
+	if len(a) > 0 {
+		json["_meta"] = a[0]
+	}
+	return c.Status(http.StatusAccepted).JSON(json)
 }
 
 func bench(c *fiber.Ctx) float64 {
