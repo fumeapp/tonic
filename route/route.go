@@ -40,13 +40,22 @@ func bind(c *fiber.Ctx) error {
 	}
 }
 
-func ApiResource(app *fiber.App, n string, _model any, _resources ApiResourceStruct) {
+func ApiResource(app *fiber.App, n string, _model any, _resources ApiResourceStruct, middleware any) {
 	resources = _resources
 	model = _model
-	app.Get("/"+n, resources.Index).Name(n + "Index")
-	app.Get("/"+n+"/:id", bind).Name(n + "Show")
-	app.Put("/"+n+"/:id", bind).Name(n + "Update")
-	app.Delete("/"+n+"/:id", bind).Name(n + "Delete")
+
+	if middleware != nil {
+		mid := middleware.(fiber.Handler)
+		app.Get("/"+n, mid, resources.Index).Name(n + "Index")
+		app.Get("/"+n+"/:id", mid, bind).Name(n + "Show")
+		app.Put("/"+n+"/:id", mid, bind).Name(n + "Update")
+		app.Delete("/"+n+"/:id", mid, bind).Name(n + "Delete")
+	} else {
+		app.Get("/"+n, resources.Index).Name(n + "Index")
+		app.Get("/"+n+"/:id", bind).Name(n + "Show")
+		app.Put("/"+n+"/:id", bind).Name(n + "Update")
+		app.Delete("/"+n+"/:id", bind).Name(n + "Delete")
+	}
 }
 
 func isNumeric(c *fiber.Ctx) bool {

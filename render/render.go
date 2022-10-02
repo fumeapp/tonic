@@ -29,6 +29,10 @@ func Error(c *fiber.Ctx, errors any) error {
 	return c.Status(http.StatusBadRequest).JSON(H{"error": true, "errors": errors})
 }
 
+func Unauthorized(c *fiber.Ctx) error {
+	return c.Status(http.StatusUnauthorized).JSON(H{"error": true, "errors": [1]string{"Unauthorized"}})
+}
+
 func Template(c *fiber.Ctx, name string, data any) string {
 	buffer := new(bytes.Buffer)
 	if err := c.App().Config().Views.Render(buffer, name, data); err != nil {
