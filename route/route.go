@@ -14,7 +14,7 @@ type ApiResourceStruct struct {
 	Index  func(c *fiber.Ctx) error
 	Show   func(c *fiber.Ctx, value any) error
 	Update func(c *fiber.Ctx, value any) error
-	Delete func(c *fiber.Ctx, value any)
+	Delete func(c *fiber.Ctx, value any) error
 }
 
 var (
@@ -46,15 +46,15 @@ func ApiResource(app *fiber.App, n string, _model any, _resources ApiResourceStr
 
 	if middleware != nil {
 		mid := middleware.(fiber.Handler)
-		app.Get("/"+n, mid, resources.Index).Name(n + "Index")
-		app.Get("/"+n+"/:id", mid, bind).Name(n + "Show")
-		app.Put("/"+n+"/:id", mid, bind).Name(n + "Update")
-		app.Delete("/"+n+"/:id", mid, bind).Name(n + "Delete")
+		app.Get("/"+n, mid, resources.Index).Name(n + " Index")
+		app.Get("/"+n+"/:id", mid, bind).Name(n + " Show")
+		app.Put("/"+n+"/:id", mid, bind).Name(n + " Update")
+		app.Delete("/"+n+"/:id", mid, bind).Name(n + " Delete")
 	} else {
-		app.Get("/"+n, resources.Index).Name(n + "Index")
-		app.Get("/"+n+"/:id", bind).Name(n + "Show")
-		app.Put("/"+n+"/:id", bind).Name(n + "Update")
-		app.Delete("/"+n+"/:id", bind).Name(n + "Delete")
+		app.Get("/"+n, resources.Index).Name(n + " Index")
+		app.Get("/"+n+"/:id", bind).Name(n + " Show")
+		app.Put("/"+n+"/:id", bind).Name(n + " Update")
+		app.Delete("/"+n+"/:id", bind).Name(n + " Delete")
 	}
 }
 
