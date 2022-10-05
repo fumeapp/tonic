@@ -12,6 +12,7 @@ import (
 
 type ApiResourceStruct struct {
 	Index  func(c *fiber.Ctx) error
+	Create func(c *fiber.Ctx) error
 	Show   func(c *fiber.Ctx, value any) error
 	Update func(c *fiber.Ctx, value any) error
 	Delete func(c *fiber.Ctx, value any) error
@@ -61,11 +62,13 @@ func ApiResource(app *fiber.App, n string, _model any, _resources ApiResourceStr
 	if middleware != nil {
 		mid := middleware.(fiber.Handler)
 		app.Get("/"+n, mid, resources.Index).Name(n + " Index")
+		app.Post("/"+n, mid, resources.Create).Name(n + " Create")
 		app.Get("/"+n+"/:id", mid, bindShow).Name(n + " Show")
 		app.Put("/"+n+"/:id", mid, bindUpdate).Name(n + " Update")
 		app.Delete("/"+n+"/:id", mid, bindDelete).Name(n + " Delete")
 	} else {
 		app.Get("/"+n, resources.Index).Name(n + " Index")
+		app.Post("/"+n, resources.Create).Name(n + " Create")
 		app.Get("/"+n+"/:id", bindShow).Name(n + " Show")
 		app.Put("/"+n+"/:id", bindUpdate).Name(n + " Update")
 		app.Delete("/"+n+"/:id", bindDelete).Name(n + " Delete")
