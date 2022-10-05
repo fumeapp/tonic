@@ -22,22 +22,36 @@ var (
 	resources ApiResourceStruct
 )
 
+type binder func(c *fiber.Ctx, value any) error
+
 func Benchmark(c *fiber.Ctx) error {
 	c.Locals("tonicBenchmark", time.Now().UnixMicro())
 	return c.Next()
 }
 
-func bind(c *fiber.Ctx) error {
+func bind(c *fiber.Ctx, callback binder) error {
 	if isNumeric(c) {
 		value, error := retrieve(c)
 		if error != nil {
 			return invalid(c)
 		} else {
-			return resources.Show(c, value)
+			return callback(c, value)
 		}
 	} else {
 		return invalid(c)
 	}
+}
+
+func bindShow(c *fiber.Ctx) error {
+	return bind(c, resources.Show)
+}
+
+func bindUpdate(c *fiber.Ctx) error {
+	return bind(c, resources.Update)
+}
+
+func bindDelete(c *fiber.Ctx) error {
+	return bind(c, resources.Delete)
 }
 
 func ApiResource(app *fiber.App, n string, _model any, _resources ApiResourceStruct, middleware any) {
@@ -47,14 +61,14 @@ func ApiResource(app *fiber.App, n string, _model any, _resources ApiResourceStr
 	if middleware != nil {
 		mid := middleware.(fiber.Handler)
 		app.Get("/"+n, mid, resources.Index).Name(n + " Index")
-		app.Get("/"+n+"/:id", mid, bind).Name(n + " Show")
-		app.Put("/"+n+"/:id", mid, bind).Name(n + " Update")
-		app.Delete("/"+n+"/:id", mid, bind).Name(n + " Delete")
+		app.Get("/"+n+"/:id", mid, bindShow).Name(n + " Show")
+		app.Put("/"+n+"/:id", mid, bindUpdate).Name(n + " Update")
+		app.Delete("/"+n+"/:id", mid, bindDelete).Name(n + " Delete")
 	} else {
 		app.Get("/"+n, resources.Index).Name(n + " Index")
-		app.Get("/"+n+"/:id", bind).Name(n + " Show")
-		app.Put("/"+n+"/:id", bind).Name(n + " Update")
-		app.Delete("/"+n+"/:id", bind).Name(n + " Delete")
+		app.Get("/"+n+"/:id", bindShow).Name(n + " Show")
+		app.Put("/"+n+"/:id", bindUpdate).Name(n + " Update")
+		app.Delete("/"+n+"/:id", bindDelete).Name(n + " Delete")
 	}
 }
 
