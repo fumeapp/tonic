@@ -10,5 +10,7 @@ func New() fiber.Handler {
 	return cors.New(cors.Config{
 		AllowOrigins:     setting.Core.WebURL,
 		AllowCredentials: true,
+		AllowHeaders:     "Origin, Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, User-Agent",
+		ExposeHeaders:    "Origin, User-Agent",
 	})
 }
