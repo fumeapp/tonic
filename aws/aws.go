@@ -3,9 +3,9 @@ package aws
 import (
 	"bytes"
 	"context"
-	"crypto/md5"
-	"encoding/hex"
+	"crypto/rand"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -49,6 +49,14 @@ func SES() *ses.Client {
 	return ses.NewFromConfig(cfg)
 }
 
+func randToken() string {
+	b := make([]byte, 32)
+	if _, err := rand.Read(b); err != nil {
+		log.Fatalf("failed to generate random token, %v", err)
+	}
+	return fmt.Sprintf("%x", b)
+}
+
 // Uploads a file to S3 naming it after a hash of the file contents.
 // Accepts a public URL
 // returns the URL of the uploaded file and an error if there was one.
@@ -78,18 +86,9 @@ func Upload(url string) (string, error) {
 	default:
 		return "", errors.New("unable to detect Content Type: " + contentType)
 	}
-
-	hasher := md5.New()
-
-	if _, err := io.Copy(hasher, response.Body); err != nil {
-		return "", err
-	}
-
-	hash := hex.EncodeToString(hasher.Sum(nil))
-
 	result, err := Uploader().Upload(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(setting.Aws.Bucket),
-		Key:         aws.String(hash + "." + extension),
+		Key:         aws.String(randToken() + "." + extension),
 		Body:        io.NopCloser(bytes.NewBuffer(bodyBytes)),
 		ACL:         "public-read",
 		ContentType: aws.String(contentType),
