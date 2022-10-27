@@ -2,6 +2,7 @@ package route
 
 import (
 	"errors"
+	"github.com/google/uuid"
 	"net/http"
 	"strconv"
 	"time"
@@ -21,6 +22,7 @@ type ApiResourceStruct struct {
 var (
 	model     any
 	resources ApiResourceStruct
+	UUID      uuid.UUID
 )
 
 type binder func(c *fiber.Ctx, value any) error
@@ -30,15 +32,19 @@ func Benchmark(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func Pooled(c *fiber.Ctx) error {
-	c.Locals("tonicPooled", database.Pooled)
+func GenerateUUID() {
+	UUID = uuid.New()
+}
+
+func UUIDMiddleware(c *fiber.Ctx) error {
+	c.Locals("tonicUUID", UUID.String())
 	return c.Next()
 }
 
 func bind(c *fiber.Ctx, callback binder) error {
 	if isNumeric(c) {
-		value, error := retrieve(c)
-		if error != nil {
+		value, err := retrieve(c)
+		if err != nil {
 			return invalid(c)
 		} else {
 			return callback(c, value)

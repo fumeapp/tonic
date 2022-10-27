@@ -25,7 +25,8 @@ func Init(config *fiber.Config) *fiber.App {
 	return app
 }
 
-func ShowPooled(app *fiber.App) {
-	render.ExposePooled = true
-	app.Use(route.Pooled)
+func ShowUUID(app *fiber.App) {
+	render.ShowUUID = true
+	route.GenerateUUID()
+	app.Use(route.UUIDMiddleware)
 }

@@ -13,12 +13,12 @@ import (
 
 type H map[string]any
 
-var ExposePooled bool = false
+var ShowUUID bool = false
 
 func Success(c *fiber.Ctx, message string, a ...interface{}) error {
 	json := H{"_benchmark": bench(c), "type": "success", "success": true, "message": message}
-	if ExposePooled {
-		json["_pooled"] = pooled(c)
+	if ShowUUID {
+		json["_uuid"] = uuid(c)
 	}
 	if len(a) > 0 {
 		json["data"] = a[0]
@@ -53,8 +53,8 @@ func HTML(c *fiber.Ctx, html string) error {
 
 func Render(c *fiber.Ctx, data any, a ...interface{}) error {
 	json := H{"_benchmark": bench(c), "data": data}
-	if ExposePooled {
-		json["_pooled"] = pooled(c)
+	if ShowUUID {
+		json["_uuid"] = uuid(c)
 	}
 	if len(a) > 0 {
 		json["_meta"] = a[0]
@@ -68,7 +68,6 @@ func bench(c *fiber.Ctx) float64 {
 	return diff
 }
 
-func pooled(c *fiber.Ctx) bool {
-	pooled := c.Locals("tonicPooled")
-	return pooled.(bool)
+func uuid(c *fiber.Ctx) string {
+	return c.Locals("tonicUUID").(string)
 }

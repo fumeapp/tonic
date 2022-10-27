@@ -15,7 +15,6 @@ import (
 
 var Db *gorm.DB
 var Os *opensearch.Client
-var Pooled = true
 
 func DSN() string {
 	return fmt.Sprintf(
@@ -54,12 +53,6 @@ func Setup() {
 		}
 	}
 
-	if Os != nil {
-		Pooled = true
-		return
-	}
-
-	Pooled = false
 	if setting.Opensearch.Connect == "true" {
 		Os, err = opensearch.NewClient(opensearch.Config{
 			Transport: &http.Transport{
