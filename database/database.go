@@ -15,7 +15,7 @@ import (
 
 var Db *gorm.DB
 var Os *opensearch.Client
-var Pooled bool
+var Pooled = true
 
 func DSN() string {
 	return fmt.Sprintf(
