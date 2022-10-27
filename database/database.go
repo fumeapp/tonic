@@ -32,12 +32,6 @@ func DURL() string {
 }
 
 func Setup() {
-	if Os != nil {
-		Pooled = true
-		return
-	}
-
-	Pooled = false
 
 	var err error
 	var logMode = logger.Error
@@ -60,6 +54,12 @@ func Setup() {
 		}
 	}
 
+	if Os != nil {
+		Pooled = true
+		return
+	}
+
+	Pooled = false
 	if setting.Opensearch.Connect == "true" {
 		Os, err = opensearch.NewClient(opensearch.Config{
 			Transport: &http.Transport{
