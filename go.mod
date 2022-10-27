@@ -8,8 +8,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.5
 	github.com/aws/aws-sdk-go-v2/service/ses v1.14.14
 	github.com/gofiber/fiber/v2 v2.37.1
+	github.com/google/uuid v1.2.0
 	github.com/joho/godotenv v1.4.0
-	github.com/octoper/go-ray v0.1.5
 	github.com/opensearch-project/opensearch-go v1.1.0
 	gorm.io/gorm v1.23.8
 )
@@ -30,9 +30,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13 // indirect
 	github.com/aws/smithy-go v1.13.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gomarkdown/markdown v0.0.0-20210208175418-bda154fe17d8 // indirect
-	github.com/google/uuid v1.2.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
