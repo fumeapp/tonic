@@ -15,6 +15,7 @@ import (
 
 var Db *gorm.DB
 var Os *opensearch.Client
+var Pooled bool
 
 func DSN() string {
 	return fmt.Sprintf(
@@ -31,6 +32,13 @@ func DURL() string {
 }
 
 func Setup() {
+	if Os != nil {
+		Pooled = true
+		return
+	}
+
+	Pooled = false
+
 	var err error
 	var logMode = logger.Error
 
