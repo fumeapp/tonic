@@ -2,6 +2,7 @@ package tonic
 
 import (
 	"github.com/fumeapp/tonic/database"
+	"github.com/fumeapp/tonic/render"
 	"github.com/fumeapp/tonic/route"
 	"github.com/fumeapp/tonic/setting"
 	"github.com/gofiber/fiber/v2"
@@ -22,4 +23,9 @@ func Init(config *fiber.Config) *fiber.App {
 	database.Setup()
 
 	return app
+}
+
+func ShowPooled(app *fiber.App) {
+	render.ExposePooled = true
+	app.Use(route.Pooled)
 }

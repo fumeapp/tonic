@@ -30,6 +30,11 @@ func Benchmark(c *fiber.Ctx) error {
 	return c.Next()
 }
 
+func Pooled(c *fiber.Ctx) error {
+	c.Locals("tonicPooled", database.Pooled)
+	return c.Next()
+}
+
 func bind(c *fiber.Ctx, callback binder) error {
 	if isNumeric(c) {
 		value, error := retrieve(c)

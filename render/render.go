@@ -13,12 +13,17 @@ import (
 
 type H map[string]any
 
+var ExposePooled bool = false
+
 func Success(c *fiber.Ctx, message string, a ...interface{}) error {
-	output := H{"_benchmark": bench(c), "type": "success", "success": true, "message": message}
-	if len(a) > 0 {
-		output["data"] = a[0]
+	json := H{"_benchmark": bench(c), "type": "success", "success": true, "message": message}
+	if ExposePooled {
+		json["_pooled"] = pooled(c)
 	}
-	return c.Status(http.StatusAccepted).JSON(output)
+	if len(a) > 0 {
+		json["data"] = a[0]
+	}
+	return c.Status(http.StatusAccepted).JSON(json)
 
 }
 
@@ -48,6 +53,9 @@ func HTML(c *fiber.Ctx, html string) error {
 
 func Render(c *fiber.Ctx, data any, a ...interface{}) error {
 	json := H{"_benchmark": bench(c), "data": data}
+	if ExposePooled {
+		json["_pooled"] = pooled(c)
+	}
 	if len(a) > 0 {
 		json["_meta"] = a[0]
 	}
@@ -58,4 +66,9 @@ func bench(c *fiber.Ctx) float64 {
 	benchmark := c.Locals("tonicBenchmark")
 	diff := (float64(time.Now().UnixMicro() - benchmark.(int64))) / 1000000
 	return diff
+}
+
+func pooled(c *fiber.Ctx) bool {
+	pooled := c.Locals("tonicPooled")
+	return pooled.(bool)
 }
