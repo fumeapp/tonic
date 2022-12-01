@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -57,13 +58,11 @@ func randToken() string {
 	return fmt.Sprintf("%x", b)
 }
 
+// UploadURL
 // Uploads a file to S3 naming it after a hash of the file contents.
 // Accepts a public URL
 // returns the URL of the uploaded file and an error if there was one.
-func Upload(url string) (string, error) {
-
-	var extension string
-
+func UploadURL(url string) (string, error) {
 	response, err := http.Get(url)
 	if err != nil {
 		return "", err
@@ -76,16 +75,30 @@ func Upload(url string) (string, error) {
 		return "", err
 	}
 
-	contentType := http.DetectContentType(bodyBytes)
+	return Upload(bodyBytes)
+}
 
-	switch contentType {
-	case "image/jpeg":
-		extension = "jpg"
-	case "image/png":
-		extension = "png"
-	default:
-		return "", errors.New("unable to detect Content Type: " + contentType)
+// UploadFile - same functionality as UploadURL but take in a multipart.FileHeader
+func UploadFile(fileHeader *multipart.FileHeader) (string, error) {
+	file, err := fileHeader.Open()
+	if err != nil {
+		return "", err
 	}
+	bodyBytes, err := io.ReadAll(file)
+	return Upload(bodyBytes)
+}
+
+// Upload
+// Uploads a file to S3 naming it after a hash of the file contents.
+// Accepts a public URL
+// returns the URL of the uploaded file and an error if there was one.
+func Upload(bodyBytes []byte) (string, error) {
+
+	extension, contentType, err := getExtension(bodyBytes)
+	if err != nil {
+		return "", err
+	}
+
 	result, err := Uploader().Upload(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(setting.Aws.Bucket),
 		Key:         aws.String(randToken() + "." + extension),
@@ -99,6 +112,24 @@ func Upload(url string) (string, error) {
 	}
 
 	return result.Location, nil
+}
+
+// Figure out file extension and content type
+func getExtension(bytes []byte) (string, string, error) {
+
+	var extension string
+	contentType := http.DetectContentType(bytes)
+
+	switch contentType {
+	case "image/jpeg":
+		extension = "jpg"
+	case "image/png":
+		extension = "png"
+	default:
+		return "", "", errors.New("unable to detect Content Type: " + contentType)
+	}
+
+	return extension, contentType, nil
 }
 
 func SendEmail(to string, subject string, body string, from string) (*ses.SendEmailOutput, error) {
