@@ -34,6 +34,13 @@ func Error(c *fiber.Ctx, errors any) error {
 	return c.Status(http.StatusBadRequest).JSON(H{"error": true, "errors": errors})
 }
 
+func ErrorCustom(c *fiber.Ctx, status int, errors any) error {
+	if reflect.TypeOf(errors).Kind() == reflect.String {
+		errors = [1]string{fmt.Sprintf("%v", errors)}
+	}
+	return c.Status(status).JSON(H{"error": true, "errors": errors})
+}
+
 func Unauthorized(c *fiber.Ctx) error {
 	return c.Status(http.StatusUnauthorized).JSON(H{"error": true, "errors": [1]string{"Unauthorized"}})
 }
