@@ -1,16 +1,19 @@
 package database
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
-	"log"
-	"net/http"
-
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/fumeapp/tonic/setting"
-	"github.com/opensearch-project/opensearch-go"
+	opensearch "github.com/opensearch-project/opensearch-go/v2"
+	signer "github.com/opensearch-project/opensearch-go/v2/signer/awsv2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"log"
+	"net/http"
 )
 
 var Db *gorm.DB
@@ -52,16 +55,48 @@ func Setup() {
 			log.Fatalf("gorm.DB err: %v", err)
 		}
 	}
-
 	if setting.Opensearch.Connect == "true" {
-		Os, err = opensearch.NewClient(opensearch.Config{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			},
-			Addresses: []string{setting.Opensearch.Address},
-			Username:  setting.Opensearch.Username,
-			Password:  setting.Opensearch.Password,
-		})
+
+		if setting.Opensearch.Signed == "true" {
+
+			awsCfg, err := awsconfig.LoadDefaultConfig(context.Background(),
+				awsconfig.WithRegion(setting.Aws.Region),
+				awsconfig.WithCredentialsProvider(
+					credentials.NewStaticCredentialsProvider(
+						setting.Aws.AccessKeyID,
+						setting.Aws.SecretAccessKey,
+						"",
+					),
+				),
+			)
+			if err != nil {
+				panic(err)
+			}
+
+			signed, err := signer.NewSignerWithService(awsCfg, "aoss")
+
+			if err != nil {
+				panic(err)
+			}
+
+			Os, err = opensearch.NewClient(opensearch.Config{Addresses: []string{setting.Opensearch.Address},
+				Signer: signed,
+			})
+
+			if err != nil {
+				panic(err)
+			}
+
+		} else {
+			Os, err = opensearch.NewClient(opensearch.Config{
+				Transport: &http.Transport{
+					TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+				},
+				Addresses: []string{setting.Opensearch.Address},
+				Username:  setting.Opensearch.Username,
+				Password:  setting.Opensearch.Password,
+			})
+		}
 
 		if err != nil {
 			log.Fatalf("opensearch.NewClient err: %v", err)
