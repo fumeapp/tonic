@@ -85,6 +85,9 @@ func UploadFile(fileHeader *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 	bodyBytes, err := io.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
 	return Upload(bodyBytes)
 }
 
