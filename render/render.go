@@ -23,7 +23,7 @@ func Success(c *fiber.Ctx, message string, a ...interface{}) error {
 	if len(a) > 0 {
 		json["data"] = a[0]
 	}
-	return c.Status(http.StatusAccepted).JSON(json)
+	return c.Status(http.StatusOK).JSON(json)
 
 }
 
@@ -70,7 +70,7 @@ func Render(c *fiber.Ctx, data any, a ...interface{}) error {
 	if len(a) > 0 {
 		json["_meta"] = a[0]
 	}
-	return c.Status(http.StatusAccepted).JSON(json)
+	return c.Status(http.StatusOK).JSON(json)
 }
 
 func bench(c *fiber.Ctx) float64 {
