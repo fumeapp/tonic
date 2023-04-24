@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"io"
 	"log"
 	"mime/multipart"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/ses"
@@ -21,8 +23,40 @@ import (
 	"github.com/fumeapp/tonic/setting"
 )
 
-func cfg() (aws.Config, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+func DynamoInsert(region string, table string, params any) error {
+
+	cfg, err := cfg(region)
+	if err != nil {
+		return err
+	}
+
+	item, err := attributevalue.MarshalMap(params)
+	if err != nil {
+		return err
+	}
+
+	if _, err := dynamodb.NewFromConfig(cfg).PutItem(context.Background(), &dynamodb.PutItemInput{
+		TableName: aws.String(table),
+		Item:      item,
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func cfg(params ...string) (aws.Config, error) {
+
+	region := "us-east-1"
+
+	// check for a starting parameter of an aws region
+	if len(params) > 0 {
+		if params[0] != "" {
+			region = params[0]
+		}
+	}
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
 	if err != nil {
 		return cfg, errors.New("failed to load AWS config " + err.Error())
 	}
