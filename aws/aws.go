@@ -21,8 +21,18 @@ import (
 	"github.com/fumeapp/tonic/setting"
 )
 
-func cfg() (aws.Config, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+func cfg(params ...string) (aws.Config, error) {
+
+	region := "us-east-1"
+
+	// check for a starting parameter of an aws region
+	if len(params) > 0 {
+		if params[0] != "" {
+			region = params[0]
+		}
+	}
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
 	if err != nil {
 		return cfg, errors.New("failed to load AWS config " + err.Error())
 	}
