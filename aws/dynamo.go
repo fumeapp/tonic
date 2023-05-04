@@ -78,11 +78,14 @@ func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
 			query = fmt.Sprintf(`%s AND "%s" = '%s'`, query, where.Field, where.Value)
 		}
 	}
-	query = fmt.Sprintf(`%s ORDER BY "%s" %s`,
-		query,
-		q.OrderField,
-		q.Direction,
-	)
+	if q.OrderField != "" && q.Direction != "" {
+		query = fmt.Sprintf(`%s ORDER BY "%s" %s`,
+			query,
+			q.OrderField,
+			q.Direction,
+		)
+	}
+
 	p, err := dynamodb.NewFromConfig(config).ExecuteStatement(context.Background(),
 		&dynamodb.ExecuteStatementInput{
 			Statement:      aws.String(query),
