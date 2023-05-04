@@ -19,14 +19,15 @@ type DynamoIndexQuery struct {
 
 type DynamoIndexWhere struct {
 	Field string
-	Value string
+	Type  string
+	Value interface{}
 }
 
 type DynamoIndexWheres []DynamoIndexWhere
 
 // Add - append to the w
-func (w *DynamoIndexWheres) Add(field string, value string) {
-	*w = append(*w, DynamoIndexWhere{Field: field, Value: value})
+func (w *DynamoIndexWheres) Add(field string, fType string, value interface{}) {
+	*w = append(*w, DynamoIndexWhere{Field: field, Type: fType, Value: value})
 }
 
 type DynamoIndexResults struct {
@@ -42,10 +43,16 @@ func DynamoIndex(region string, table string) DynamoIndexQuery {
 	return query
 }
 
-func (q DynamoIndexQuery) Where(field string, value string) DynamoIndexQuery {
-	q.Wheres.Add(field, value)
+func (q DynamoIndexQuery) WhereStr(field string, value string) DynamoIndexQuery {
+	q.Wheres.Add(field, "string", value)
 	return q
 }
+
+func (q DynamoIndexQuery) WhereBool(field string, value bool) DynamoIndexQuery {
+	q.Wheres.Add(field, "bool", value)
+	return q
+}
+
 func (q DynamoIndexQuery) Order(field string) DynamoIndexQuery {
 	q.OrderField = field
 	return q
@@ -65,6 +72,21 @@ func (q DynamoIndexQuery) Limit(limit int) DynamoIndexQuery {
 	return q
 }
 
+func (w DynamoIndexWhere) ToString() string {
+	switch w.Type {
+	case "string":
+		return fmt.Sprintf(`"%s" = '%s'`, w.Field, w.Value)
+	case "bool":
+		if w.Value == true {
+			return fmt.Sprintf(`"%s" = %s`, w.Field, "true")
+		} else {
+			return fmt.Sprintf(`"%s" = %s`, w.Field, "false")
+		}
+	default:
+		return ""
+	}
+}
+
 func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
 	config, err := cfg(q.Region)
 
@@ -74,9 +96,9 @@ func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
 	query := fmt.Sprintf(`SELECT * FROM "%s"`, q.Table)
 	for index, where := range q.Wheres {
 		if index == 0 {
-			query = fmt.Sprintf(`%s WHERE "%s" = '%s'`, query, where.Field, where.Value)
+			query = fmt.Sprintf(`%s WHERE %s`, query, where.ToString())
 		} else {
-			query = fmt.Sprintf(`%s AND "%s" = '%s'`, query, where.Field, where.Value)
+			query = fmt.Sprintf(`%s AND %s`, query, where.ToString())
 		}
 	}
 	if q.OrderField != "" && q.Direction != "" {
