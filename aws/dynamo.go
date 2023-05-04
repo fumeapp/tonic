@@ -32,6 +32,7 @@ func (w *DynamoIndexWheres) Add(field string, value string) {
 type DynamoIndexResults struct {
 	NextToken *string
 	Items     interface{}
+	Query     *string
 }
 
 func DynamoIndex(region string, table string) DynamoIndexQuery {
@@ -104,6 +105,7 @@ func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
 	var results DynamoIndexResults
 	results.Items = out
 	results.NextToken = p.NextToken
+	results.Query = &query
 
 	return &results, nil
 }
