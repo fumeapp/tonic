@@ -11,11 +11,22 @@ import (
 type DynamoIndexQuery struct {
 	Region     string
 	Table      string
-	WhereField string
-	WhereValue string
+	Wheres     DynamoIndexWheres
 	OrderField string
 	Direction  string
 	SetLimit   *int32
+}
+
+type DynamoIndexWhere struct {
+	Field string
+	Value string
+}
+
+type DynamoIndexWheres []DynamoIndexWhere
+
+// Add - append to the w
+func (w *DynamoIndexWheres) Add(field string, value string) {
+	*w = append(*w, DynamoIndexWhere{Field: field, Value: value})
 }
 
 type DynamoIndexResults struct {
@@ -31,8 +42,7 @@ func DynamoIndex(region string, table string) DynamoIndexQuery {
 }
 
 func (q DynamoIndexQuery) Where(field string, value string) DynamoIndexQuery {
-	q.WhereField = field
-	q.WhereValue = value
+	q.Wheres.Add(field, value)
 	return q
 }
 func (q DynamoIndexQuery) Order(field string) DynamoIndexQuery {
@@ -60,10 +70,16 @@ func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
 	if err != nil {
 		return nil, err
 	}
-	query := fmt.Sprintf(`SELECT * FROM "%s" WHERE "%s" = '%s' ORDER BY "%s" %s`,
-		q.Table,
-		q.WhereField,
-		q.WhereValue,
+	query := fmt.Sprintf(`SELECT * FROM "%s"`, q.Table)
+	for index, where := range q.Wheres {
+		if index == 0 {
+			query = fmt.Sprintf(`%s WHERE "%s" = '%s'`, query, where.Field, where.Value)
+		} else {
+			query = fmt.Sprintf(`%s AND "%s" = '%s'`, query, where.Field, where.Value)
+		}
+	}
+	query = fmt.Sprintf(`%s ORDER BY "%s" %s`,
+		query,
 		q.OrderField,
 		q.Direction,
 	)
