@@ -150,6 +150,10 @@ func SendEmail(to string, subject string, body string, from string) (*ses.SendEm
 }
 
 func SendEmails(to []string, subject string, body string, from string) (*ses.SendEmailOutput, error) {
+	// force an error if the to array is 51 or more
+	if len(to) > 50 {
+		return nil, errors.New("Maximum number of recipients is 50")
+	}
 	return SES().SendEmail(context.TODO(), &ses.SendEmailInput{
 		Destination: &types.Destination{
 			ToAddresses: to,
