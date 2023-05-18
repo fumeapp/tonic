@@ -146,11 +146,13 @@ func getExtension(bytes []byte) (string, string, error) {
 }
 
 func SendEmail(to string, subject string, body string, from string) (*ses.SendEmailOutput, error) {
+	return SendEmails([]string{to}, subject, body, from)
+}
+
+func SendEmails(to []string, subject string, body string, from string) (*ses.SendEmailOutput, error) {
 	return SES().SendEmail(context.TODO(), &ses.SendEmailInput{
 		Destination: &types.Destination{
-			ToAddresses: []string{
-				to,
-			},
+			ToAddresses: to,
 		},
 		Source: aws.String(from),
 		Message: &types.Message{
