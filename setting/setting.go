@@ -13,9 +13,9 @@ func env(key string, config string) string {
 	return config
 }
 
-func Setup() (*CoreSetting, *DatabaseSetting, *OpensearchSetting, *AWsSetting) {
+func Setup(file string) (*CoreSetting, *DatabaseSetting, *OpensearchSetting, *AWsSetting) {
 
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load(file); err != nil {
 		return CoreSetup(), DatabaseSetup(), OpensearchSetup(), AwsSetup()
 	}
 	return CoreSetup(), DatabaseSetup(), OpensearchSetup(), AwsSetup()

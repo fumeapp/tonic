@@ -8,9 +8,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Init(config *fiber.Config) *fiber.App {
+func Init(config *fiber.Config, args ...string) *fiber.App {
 
-	setting.Setup()
+	if len(args) > 0 {
+		setting.Setup(args[0])
+	} else {
+		setting.Setup(".env")
+	}
 
 	config.EnablePrintRoutes = setting.IsDev()
 
