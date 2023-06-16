@@ -88,11 +88,6 @@ func (w DynamoIndexWhere) ToString() string {
 }
 
 func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
-	config, err := cfg(q.Region)
-
-	if err != nil {
-		return nil, err
-	}
 	query := fmt.Sprintf(`SELECT * FROM "%s"`, q.Table)
 	for index, where := range q.Wheres {
 		if index == 0 {
@@ -109,7 +104,7 @@ func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
 		)
 	}
 
-	p, err := dynamodb.NewFromConfig(config).ExecuteStatement(context.Background(),
+	p, err := dynamodb.NewFromConfig(Config()).ExecuteStatement(context.Background(),
 		&dynamodb.ExecuteStatementInput{
 			Statement:      aws.String(query),
 			ConsistentRead: aws.Bool(false),
@@ -133,18 +128,12 @@ func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
 }
 
 func DynamoInsert(region string, table string, params any) error {
-
-	config, err := cfg(region)
-	if err != nil {
-		return err
-	}
-
 	item, err := attributevalue.MarshalMap(params)
 	if err != nil {
 		return err
 	}
 
-	if _, err := dynamodb.NewFromConfig(config).PutItem(context.Background(), &dynamodb.PutItemInput{
+	if _, err := dynamodb.NewFromConfig(Config()).PutItem(context.Background(), &dynamodb.PutItemInput{
 		TableName: aws.String(table),
 		Item:      item,
 	}); err != nil {
