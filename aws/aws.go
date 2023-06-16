@@ -21,7 +21,7 @@ import (
 	"github.com/fumeapp/tonic/setting"
 )
 
-func cfg(params ...string) (aws.Config, error) {
+func Config(params ...string) aws.Config {
 
 	region := "us-east-1"
 
@@ -34,18 +34,14 @@ func cfg(params ...string) (aws.Config, error) {
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
 	if err != nil {
-		return cfg, errors.New("failed to load AWS config " + err.Error())
+		log.Fatalf("failed to load AWS config, %v", err)
 	}
 
-	return cfg, nil
+	return cfg
 }
 
 func S3() *s3.Client {
-	cfg, err := cfg()
-	if err != nil {
-		log.Fatalf("failed to load AWS config, %v", err)
-	}
-	return s3.NewFromConfig(cfg)
+	return s3.NewFromConfig(Config())
 }
 
 func Uploader() *manager.Uploader {
@@ -53,11 +49,7 @@ func Uploader() *manager.Uploader {
 }
 
 func SES() *ses.Client {
-	cfg, err := cfg()
-	if err != nil {
-		log.Fatalf("failed to load AWS config, %v", err)
-	}
-	return ses.NewFromConfig(cfg)
+	return ses.NewFromConfig(Config())
 }
 
 func randToken() string {
@@ -146,17 +138,11 @@ func getExtension(bytes []byte) (string, string, error) {
 }
 
 func SendEmail(to string, subject string, body string, from string) (*ses.SendEmailOutput, error) {
-	return SendEmails([]string{to}, subject, body, from)
-}
-
-func SendEmails(to []string, subject string, body string, from string) (*ses.SendEmailOutput, error) {
-	// force an error if the to array is 51 or more
-	if len(to) > 50 {
-		return nil, errors.New("Maximum number of recipients is 50")
-	}
 	return SES().SendEmail(context.TODO(), &ses.SendEmailInput{
 		Destination: &types.Destination{
-			ToAddresses: to,
+			ToAddresses: []string{
+				to,
+			},
 		},
 		Source: aws.String(from),
 		Message: &types.Message{
