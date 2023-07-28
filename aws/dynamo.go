@@ -31,10 +31,11 @@ func (w *DynamoIndexWheres) Add(field string, fType string, value interface{}) {
 	*w = append(*w, DynamoIndexWhere{Field: field, Type: fType, Value: value})
 }
 
+// hide query if not specified
 type DynamoIndexResults struct {
-	NextToken *string
-	Items     interface{}
-	Query     *string
+	NextToken *string     `json:"next_token,omitempty"`
+	Items     interface{} `json:"items"`
+	Query     *string     `json:"query,omitempty"`
 }
 
 func DynamoIndex(region string, table string) DynamoIndexQuery {
