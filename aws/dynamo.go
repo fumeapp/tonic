@@ -9,12 +9,13 @@ import (
 )
 
 type DynamoIndexQuery struct {
-	Region     string
-	Table      string
-	Wheres     DynamoIndexWheres
-	OrderField string
-	Direction  string
-	SetLimit   *int32
+	Region      string
+	Table       string
+	Wheres      DynamoIndexWheres
+	OrderField  string
+	Direction   string
+	SetLimit    *int32
+	ExposeQuery bool
 }
 
 type DynamoIndexWhere struct {
@@ -41,6 +42,11 @@ func DynamoIndex(region string, table string) DynamoIndexQuery {
 	query.Region = region
 	query.Table = table
 	return query
+}
+
+func (q DynamoIndexQuery) ShowQuery(value bool) DynamoIndexQuery {
+	q.ExposeQuery = value
+	return q
 }
 
 func (q DynamoIndexQuery) WhereStr(field string, value string) DynamoIndexQuery {
@@ -122,7 +128,9 @@ func (q DynamoIndexQuery) Get(out interface{}) (*DynamoIndexResults, error) {
 	var results DynamoIndexResults
 	results.Items = out
 	results.NextToken = p.NextToken
-	results.Query = &query
+	if q.ExposeQuery {
+		results.Query = &query
+	}
 
 	return &results, nil
 }
