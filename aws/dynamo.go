@@ -6,6 +6,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"time"
 )
 
 type DynamoIndexQuery struct {
@@ -31,7 +33,7 @@ func (w *DynamoIndexWheres) Add(field string, fType string, value interface{}) {
 	*w = append(*w, DynamoIndexWhere{Field: field, Type: fType, Value: value})
 }
 
-// hide query if not specified
+// DynamoIndexResults hide query if not specified
 type DynamoIndexResults struct {
 	NextToken *string     `json:"next_token,omitempty"`
 	Items     interface{} `json:"items"`
@@ -142,10 +144,119 @@ func DynamoInsert(region string, table string, params any) error {
 		return err
 	}
 
-	if _, err := dynamodb.NewFromConfig(Config()).PutItem(context.Background(), &dynamodb.PutItemInput{
+	if _, err := dynamodb.NewFromConfig(Config(region)).PutItem(context.Background(), &dynamodb.PutItemInput{
 		TableName: aws.String(table),
 		Item:      item,
 	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DynamoBatchInsert - Similar to DynamoInsert but do a batch insert of items
+func DynamoBatchInsert(region string, table string, params []any) error {
+	items := make([]map[string]types.AttributeValue, len(params))
+	for i, param := range params {
+		item, err := attributevalue.MarshalMap(param)
+		if err != nil {
+			return err
+		}
+		items[i] = item
+
+	}
+
+	writeRequests := make([]types.WriteRequest, len(items))
+	for i, item := range items {
+		writeRequests[i] = types.WriteRequest{
+			PutRequest: &types.PutRequest{
+				Item: item,
+			},
+		}
+	}
+
+	_, err := dynamodb.NewFromConfig(Config(region)).BatchWriteItem(context.Background(),
+		&dynamodb.BatchWriteItemInput{
+			RequestItems: map[string][]types.WriteRequest{
+				table: writeRequests,
+			},
+		},
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DynamoTableRefresh - Delete and re-create a table
+func DynamoTableRefresh(region string, table string, partitionKey string, sortKey string) error {
+
+	client := dynamodb.NewFromConfig(Config(region))
+
+	_, err := client.DeleteTable(context.Background(),
+		&dynamodb.DeleteTableInput{
+			TableName: aws.String(table),
+		},
+	)
+
+	if err != nil {
+		return err
+	}
+
+	err = dynamodb.NewTableNotExistsWaiter(client).Wait(
+		context.TODO(),
+		&dynamodb.DescribeTableInput{
+			TableName: aws.String(table),
+		},
+		5*time.Minute,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = dynamodb.NewFromConfig(Config(region)).CreateTable(context.Background(),
+		&dynamodb.CreateTableInput{
+			TableName: aws.String(table),
+			AttributeDefinitions: []types.AttributeDefinition{
+				{
+					AttributeName: aws.String(partitionKey),
+					AttributeType: types.ScalarAttributeTypeS,
+				},
+				{
+					AttributeName: aws.String(sortKey),
+					AttributeType: types.ScalarAttributeTypeS,
+				},
+			},
+			KeySchema: []types.KeySchemaElement{
+				{
+					AttributeName: aws.String(partitionKey),
+					KeyType:       types.KeyTypeHash,
+				},
+				{
+					AttributeName: aws.String(sortKey),
+					KeyType:       types.KeyTypeRange,
+				},
+			},
+			BillingMode: types.BillingModePayPerRequest,
+		},
+	)
+
+	if err != nil {
+		return err
+	}
+
+	err = dynamodb.NewTableExistsWaiter(client).Wait(
+		context.TODO(),
+		&dynamodb.DescribeTableInput{
+			TableName: aws.String(table),
+		},
+		5*time.Minute,
+	)
+
+	if err != nil {
 		return err
 	}
 
