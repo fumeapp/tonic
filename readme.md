@@ -33,13 +33,13 @@ import (
    fume "github.com/fumeapp/fiber"
    "github.com/fumeapp/tonic"
    "github.com/fumeapp/tonic/render"
-	"github.com/gofiber/fiber/v2"
+   "github.com/gofiber/fiber/v2"
 )
 
 func main() {
-   app := tonic.Init()
+   app := tonic.Init(&fiber.Config{})
    app.Get("/", func(c *fiber.Ctx) { render.Render(c, render.H{"message": "Hello World"}) })
-   fume.Start(routes, fume.Options{})
+   fume.Start(app, fume.Options{})
 }
 ```
 
