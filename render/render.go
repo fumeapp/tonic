@@ -34,15 +34,19 @@ func Error(c *fiber.Ctx, errors any) error {
 	return c.Status(http.StatusBadRequest).JSON(H{"error": true, "errors": errors})
 }
 
-func ErrorPayment(c *fiber.Ctx, message string) error {
-	return c.Status(http.StatusPaymentRequired).JSON(H{"error": true, "errors": [1]string{message}})
-}
-
 func ErrorCustom(c *fiber.Ctx, status int, errors any) error {
 	if reflect.TypeOf(errors).Kind() == reflect.String {
 		errors = [1]string{fmt.Sprintf("%v", errors)}
 	}
 	return c.Status(status).JSON(H{"error": true, "errors": errors})
+}
+
+func ErrorNotFound(c *fiber.Ctx, errors any) error {
+	return ErrorCustom(c, http.StatusNotFound, errors)
+}
+
+func ErrorPayment(c *fiber.Ctx, errors any) error {
+	return ErrorCustom(c, http.StatusPaymentRequired, errors)
 }
 
 func Unauthorized(c *fiber.Ctx) error {
