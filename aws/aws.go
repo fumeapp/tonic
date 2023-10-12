@@ -137,7 +137,7 @@ func getExtension(bytes []byte) (string, string, error) {
 	case "image/webp":
 		extension = "webp"
 	case "image/svg":
-		extension = "webp"
+		extension = "svg"
 	default:
 		return "", "", errors.New("unable to detect Content Type: " + contentType)
 	}
