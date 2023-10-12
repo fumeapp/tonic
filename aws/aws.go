@@ -126,10 +126,18 @@ func getExtension(bytes []byte) (string, string, error) {
 	contentType := http.DetectContentType(bytes)
 
 	switch contentType {
+	case "image/jpg":
+		extension = "jpg"
 	case "image/jpeg":
 		extension = "jpg"
 	case "image/png":
 		extension = "png"
+	case "image/gif":
+		extension = "gif"
+	case "image/webp":
+		extension = "webp"
+	case "image/svg":
+		extension = "webp"
 	default:
 		return "", "", errors.New("unable to detect Content Type: " + contentType)
 	}
