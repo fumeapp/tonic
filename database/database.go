@@ -4,6 +4,9 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"log"
+	"net/http"
+
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/fumeapp/tonic/setting"
@@ -12,8 +15,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"log"
-	"net/http"
 )
 
 var Db *gorm.DB
@@ -21,10 +22,11 @@ var Os *opensearch.Client
 
 func DSN() string {
 	return fmt.Sprintf(
-		"%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		setting.Database.Username,
 		setting.Database.Password,
 		setting.Database.Host,
+		setting.Database.Port,
 		setting.Database.Database,
 	)
 }
