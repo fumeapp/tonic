@@ -35,3 +35,7 @@ func IsStaging() bool {
 func IsProduction() bool {
 	return env("APP_ENV", "dev") == "production"
 }
+
+func IsTesting() bool {
+	return env("APP_ENV", "dev") == "testing"
+}
