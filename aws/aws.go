@@ -145,6 +145,12 @@ func getExtension(bytes []byte) (string, string, error) {
 	return extension, contentType, nil
 }
 
+func VerifyEmail(to string) (*ses.VerifyEmailIdentityOutput, error) {
+	return SES().VerifyEmailIdentity(context.TODO(), &ses.VerifyEmailIdentityInput{
+		EmailAddress: aws.String(to),
+	})
+}
+
 func SendEmail(to string, subject string, body string, from string) (*ses.SendEmailOutput, error) {
 	return SES().SendEmail(context.TODO(), &ses.SendEmailInput{
 		Destination: &types.Destination{
