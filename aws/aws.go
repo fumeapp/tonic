@@ -77,7 +77,7 @@ func UploadURL(url string) (string, error) {
 		return "", err
 	}
 
-	return Upload(bodyBytes)
+	return Upload(bodyBytes, "")
 }
 
 // UploadFile - same functionality as UploadURL but take in a multipart.FileHeader
@@ -90,16 +90,20 @@ func UploadFile(fileHeader *multipart.FileHeader) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return Upload(bodyBytes)
+	return Upload(bodyBytes, fileHeader.Header.Get("Content-Type"))
 }
 
 // Upload
 // Uploads a file to S3 naming it after a hash of the file contents.
 // Accepts a public URL
 // returns the URL of the uploaded file and an error if there was one.
-func Upload(bodyBytes []byte) (string, error) {
+func Upload(bodyBytes []byte, contentType string) (string, error) {
 
-	extension, contentType, err := getExtension(bodyBytes)
+	if contentType == "" {
+		contentType = http.DetectContentType(bodyBytes)
+	}
+
+	extension, err := getExtension(contentType)
 	if err != nil {
 		return "", err
 	}
@@ -120,10 +124,9 @@ func Upload(bodyBytes []byte) (string, error) {
 }
 
 // Figure out file extension and content type
-func getExtension(bytes []byte) (string, string, error) {
+func getExtension(contentType string) (string, error) {
 
 	var extension string
-	contentType := http.DetectContentType(bytes)
 
 	switch contentType {
 	case "image/jpg":
@@ -149,10 +152,10 @@ func getExtension(bytes []byte) (string, string, error) {
 	case "application/csv":
 		extension = "csv"
 	default:
-		return "", "", errors.New("unable to detect Content Type: " + contentType)
+		return "", errors.New("unable to detect Content Type: " + contentType)
 	}
 
-	return extension, contentType, nil
+	return extension, nil
 }
 
 func VerifyEmail(to string) (*ses.VerifyEmailIdentityOutput, error) {
