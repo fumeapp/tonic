@@ -141,6 +141,12 @@ func getExtension(contentType string) (string, error) {
 		extension = "webp"
 	case "image/svg":
 		extension = "svg"
+	case "application/json":
+		extension = "json"
+	case "application/yaml":
+		extension = "yaml"
+	case "application/x-yaml":
+		extension = "yaml"
 	case "application/vnd.ms-excel":
 		extension = "xls"
 	case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
@@ -151,6 +157,8 @@ func getExtension(contentType string) (string, error) {
 		extension = "csv"
 	case "application/csv":
 		extension = "csv"
+	case "text/tab-separated-values":
+		extension = "tsv"
 	default:
 		return "", errors.New("unable to detect Content Type: " + contentType)
 	}
