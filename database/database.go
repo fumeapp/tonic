@@ -10,7 +10,7 @@ import (
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/fumeapp/tonic/setting"
-	opensearch "github.com/opensearch-project/opensearch-go"
+	opensearch "github.com/opensearch-project/opensearch-go/v4"
 	signer "github.com/opensearch-project/opensearch-go/v4/signer/awsv2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
