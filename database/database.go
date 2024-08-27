@@ -10,7 +10,8 @@ import (
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/fumeapp/tonic/setting"
-	opensearch "github.com/opensearch-project/opensearch-go/v4"
+	"github.com/opensearch-project/opensearch-go/v4"
+	"github.com/opensearch-project/opensearch-go/v4/opensearchapi"
 	signer "github.com/opensearch-project/opensearch-go/v4/signer/awsv2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,7 +19,7 @@ import (
 )
 
 var Db *gorm.DB
-var Os *opensearch.Client
+var Os *opensearchapi.Client
 
 func DSN() string {
 	return fmt.Sprintf(
@@ -81,8 +82,11 @@ func Setup() {
 				panic(err)
 			}
 
-			Os, err = opensearch.NewClient(opensearch.Config{Addresses: []string{setting.Opensearch.Address},
-				Signer: signed,
+			Os, err = opensearchapi.NewClient(opensearchapi.Config{
+				opensearch.Config{
+					Addresses: []string{setting.Opensearch.Address},
+					Signer:    signed,
+				},
 			})
 
 			if err != nil {
@@ -90,13 +94,15 @@ func Setup() {
 			}
 
 		} else {
-			Os, err = opensearch.NewClient(opensearch.Config{
-				Transport: &http.Transport{
-					TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			Os, err = opensearchapi.NewClient(opensearchapi.Config{
+				opensearch.Config{
+					Transport: &http.Transport{
+						TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+					},
+					Addresses: []string{setting.Opensearch.Address},
+					Username:  setting.Opensearch.Username,
+					Password:  setting.Opensearch.Password,
 				},
-				Addresses: []string{setting.Opensearch.Address},
-				Username:  setting.Opensearch.Username,
-				Password:  setting.Opensearch.Password,
 			})
 		}
 
